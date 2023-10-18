@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-A simple inline announcement.
+Selected for PhD in Artificial Intelligence at IIT Kharagpur.
