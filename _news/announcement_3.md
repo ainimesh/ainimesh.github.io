@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-I have been offered TCS Research Fellowship by TCS Research, Inida! :sparkles: :smile:
+I have been offered TCS Research Fellowship by TCS Research, India! :sparkles: :smile:
