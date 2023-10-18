@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='http://www.ai.iitkgp.ac.in/students-1'>Affiliations</a>. Research Scholar (PhD), IIT Kharagpur.
+subtitle: <a href='http://www.ai.iitkgp.ac.in/students-1'>Affiliations</a>.
 
 profile:
   align: right
