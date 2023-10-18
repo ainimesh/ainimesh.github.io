@@ -2,11 +2,11 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: <a href='http://www.ai.iitkgp.ac.in/students-1'>Affiliations</a>. Research Scholar (PhD), IIT Kharagpur.
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: ani.jpg
   image_circular: false # crops the image to make it circular
   address: >
     <p>555 your office number</p>
