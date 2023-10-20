@@ -4,6 +4,6 @@ permalink: /cv/
 title: cv
 nav: true
 nav_order: 4
-cv_pdf: example_pdf.pdf
-description: This is a description of the page. You can modify it in 'pages/_cv.md'. You can also change or remove the top pdf download button.
+cv_pdf: Resume_2_Ainimesh.pdf
+description: Below is a brief overview of my academic journey. For a more comprehensive account, please click the PDF link to access my full resume.
 ---
