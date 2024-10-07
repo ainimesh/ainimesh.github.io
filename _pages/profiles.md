@@ -1,8 +1,8 @@
 ---
 layout: profiles
 permalink: /people/
-title: people
-description: members of the lab or group
+title: Supervisors and Collaborators
+description: Here is the short discription of people, I am and have been associated with.
 nav: true
 nav_order: 3
 
