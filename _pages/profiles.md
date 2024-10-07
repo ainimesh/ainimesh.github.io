@@ -11,7 +11,7 @@ profiles:
   # and create one content file for each profile inside _pages/
   - align: right
     image: Pkb2.jpg
-    content: plaban.md
+    content: people/plaban.md
     image_circular: true # crops the image to make it circular
     more_info: >
       <p>Plaban Kumar Bhowmick</p>
@@ -19,7 +19,7 @@ profiles:
       <p>Department of AI, IIT Kharagpur</p>
   - align: left
     image: pralayFront.jpg
-    content: pralay.md
+    content: people/pralay.md
     image_circular: true # crops the image to make it circular
     more_info: >
       <p>Pralay Mitra</p>
