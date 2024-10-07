@@ -6,7 +6,7 @@ subtitle: <a href='http://www.ai.iitkgp.ac.in/students-1'>Affiliations</a>.
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: ani.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>AI Lab, Takshashila Building, First Floor</p>
