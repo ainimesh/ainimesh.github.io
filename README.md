@@ -1,2 +1,2 @@
 # Web Page of Animesh!
-Credit: ai-folio
+This webpage is heighly inspired from al-folio.
