@@ -1,7 +1,7 @@
 ---
 layout: profiles
 permalink: /people/
-title: Supervisors and Collaborators
+title: people
 description: Here is the short discription of people, I am and have been associated with.
 nav: true
 nav_order: 3
