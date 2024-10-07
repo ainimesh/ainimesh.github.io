@@ -19,7 +19,7 @@ social: false # includes social icons at the bottom of the page
 
 Hi :wave: , I am Animesh!
 
-PhD Scholar (TCS Research Fellow) in CoE in Artificial Intelligence at Indian Institute of Technology, Kharagpur. 
+PhD Scholar (TCS Research Fellow) in Department of Artificial Intelligence at Indian Institute of Technology, Kharagpur. 
 
 Graphs, whether in the form of social networks, biological structures, or intricate neural pathways, hold the keys to unlocking secrets, solving puzzles, and pushing the boundaries of what's possible. As an explorer of this fascinating domain, I'm on a quest to unravel the stories hidden within the nodes and edges, to decipher the language of connections, and to harness the power of graphs to transform our understanding of the world by the help of Graph Machine Learning. Currently I am pursuing PhD under the supervision of [Prof. Plaban Kumar Bhowmick](https://plaban.github.io/) and [Prof. Pralay Mitra](https://cse.iitkgp.ac.in/~pralay/).
 
