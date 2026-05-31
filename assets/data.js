@@ -23,12 +23,12 @@ window.SITE = {
      --------------------------------------------------------------------------- */
   socials: [
     { network: "email",         url: "mailto:animesh.sachan24794@gmail.com" },
-    { network: "googlescholar", url: "#" },   // ← add your Google Scholar profile URL
+    { network: "googlescholar", url: "https://scholar.google.com/citations?user=y61NKacAAAAJ&hl=en" }, 
     { network: "github",        url: "https://github.com/ainimesh" },
     { network: "linkedin",      url: "https://www.linkedin.com/in/animeshsachan" },
-    { network: "researchgate",  url: "#" },   // ← add your ResearchGate URL
-    { network: "x",             url: "#" },    // ← add your X / Twitter URL
-    { network: "youtube",       url: "#" },    // ← add your YouTube channel URL
+    { network: "researchgate",  url: "https://www.researchgate.net/profile/Animesh-Sachan/research" }, 
+    { network: "x",             url: "https://x.com/ainimesh" }, 
+    { network: "youtube",       url: "https://www.youtube.com/@ainimesh" },
   ],
 
   /* ---------------------------------------------------------------------------
