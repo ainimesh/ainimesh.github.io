@@ -17,9 +17,6 @@ window.SITE = {
 
   /* ---------------------------------------------------------------------------
      SOCIAL LINKS  — shown as icons in the hero and footer.
-     Put "#" to hide/disable a link for now and fill it in later.
-     Available networks: email, github, googlescholar, linkedin, x,
-                         youtube, researchgate, orcid.
      --------------------------------------------------------------------------- */
   socials: [
     { network: "email",         url: "mailto:animesh.sachan24794@gmail.com" },
@@ -32,32 +29,46 @@ window.SITE = {
   ],
 
   /* ---------------------------------------------------------------------------
-     PUBLICATIONS  (newest first)
-     badge   : short tag shown on the left (e.g. "Preprint", "IJCNN", journal name)
-     authors : plain list; your name is auto-bolded
-     links   : buttons — add/remove as needed
-     bibtex  : the "Cite" button copies this to the clipboard
+    PUBLICATIONS  (newest first)
      --------------------------------------------------------------------------- */
   publications: [
     {
-      year: 2024,
-      badge: "Preprint",
-      title: "E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for Protein–Protein Interaction Site Prediction",
-      authors: "Animesh Sachan, Rishi Suvvada, Plaban Kumar Bhowmick, Pralay Mitra",
-      venue: "bioRxiv (under review)",
+      year: 2026,
+      badge: "ArXiv",
+      title: "GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction",
+      authors: "Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
+      venue: "Preprint",
       links: [
-        { label: "PDF", url: "https://www.biorxiv.org/content/early/2024/10/06/2024.10.06.616807.full.pdf" },
-        { label: "bioRxiv", url: "https://www.biorxiv.org/content/early/2024/10/06/2024.10.06.616807" },
-        { label: "DOI", url: "https://doi.org/10.1101/2024.10.06.616807" },
+        { label: "DOI", url: "https://doi.org/10.48550/arXiv.2603.19817" },
       ],
-      bibtex: `@article{sachan2024eqagnn,
-  title   = {E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for Protein-Protein Interaction Site Prediction},
-  author  = {Sachan, Animesh and Suvvada, Rishi and Bhowmick, Plaban Kumar and Mitra, Pralay},
-  journal = {bioRxiv},
-  year    = {2024},
-  doi     = {10.1101/2024.10.06.616807},
-  note    = {Preprint, under review}
-}`,
+      bibtex: `@misc{gdegan,
+      title={GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction}, 
+      author={Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
+      year={2026},
+      eprint={2603.19817},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2603.19817}}`,
+    },
+
+    {
+      year: 2025,
+      badge: "IEEE-TSIPN",
+      title: "E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for Protein–Protein Interaction Site Prediction",
+      authors: "Animesh, Rishi Suvvada, Plaban Kumar Bhowmick, Pralay Mitra",
+      venue: "IEEE Transactions on Signal and Information Processing over Networks",
+      links: [
+        { label: "DOI", url: "https://doi.org/10.1109/TSIPN.2025.3587396" },
+      ],
+      bibtex: `@ARTICLE{eqagnn_ppis,
+  author={Animesh and Suvvada, Rishi and Bhowmick, Plaban Kumar and Mitra, Pralay},
+  journal={IEEE Transactions on Signal and Information Processing over Networks}, 
+  title={E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for Protein-Protein Interaction Site Prediction}, 
+  year={2025},
+  volume={11},
+  pages={740-751},
+  doi={10.1109/TSIPN.2025.3587396}}
+`,
     },
 
     {
