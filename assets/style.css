@@ -169,7 +169,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
 .hero__photo img {
   width: 420px;
-  height: 448px;
+  height: 550px;
   object-fit: cover;
   border-radius: 18px;
   border: 1px solid var(--border);
