@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Animesh Sachan — PhD Scholar, Graph ML &amp; Structural Bioinformatics</title>
+  <meta name="description" content="Animesh Sachan is a PhD Scholar (TCS Research Fellow) in the Department of Artificial Intelligence at IIT Kharagpur, working on graph neural networks for protein structures and binding-site prediction." />
+  <meta name="author" content="Animesh Sachan" />
+  <link rel="canonical" href="https://ainimesh.github.io/" />
+
+  <!-- Open Graph / social cards -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Animesh Sachan — PhD Scholar, Graph ML" />
+  <meta property="og:description" content="Graph neural networks for protein structures and binding-site prediction. PhD Scholar at IIT Kharagpur." />
+  <meta property="og:url" content="https://ainimesh.github.io/" />
+  <meta property="og:image" content="https://ainimesh.github.io/assets/img/ani.jpg" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" type="image/png" href="assets/img/fav_ani.png" />
+  <link rel="stylesheet" href="assets/style.css" />
+
+  <!-- Set theme before paint to avoid a flash of the wrong theme -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("theme");
+        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = saved || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="top">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#top">Animesh Sachan</a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#publications">Publications</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button id="theme-toggle" class="theme-toggle" type="button"
+              aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <div class="hero__text">
+        <p class="hero__eyebrow">PhD Scholar · TCS Research Fellow</p>
+        <h1 class="hero__name">Animesh Sachan</h1>
+        <p class="hero__role">
+          Department of Artificial Intelligence,<br />
+          Indian Institute of Technology, Kharagpur
+        </p>
+        <p class="hero__tagline">
+          I build <strong>graph neural networks</strong> that read the 3-D structure of
+          proteins to understand how they bind &mdash; turning nodes and edges into
+          biological insight.
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="mailto:animesh.sachan24794@gmail.com">
+            <span aria-hidden="true">✉</span> Email
+          </a>
+          <!-- Add your CV at assets/cv.pdf, then this button works automatically. -->
+          <a class="btn" href="assets/cv.pdf">
+            <span aria-hidden="true">📄</span> CV
+          </a>
+          <a class="btn" href="https://github.com/ainimesh" target="_blank" rel="noopener">
+            GitHub
+          </a>
+          <a class="btn" href="https://www.linkedin.com/in/animeshsachan" target="_blank" rel="noopener">
+            LinkedIn
+          </a>
+          <!-- Add your Google Scholar profile URL here once you have one:
+          <a class="btn" href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" rel="noopener">Scholar</a>
+          -->
+        </div>
+
+        <ul class="tags" aria-label="Research interests">
+          <li>Graph Neural Networks</li>
+          <li>Equivariant &amp; Geometric Deep Learning</li>
+          <li>Protein&ndash;Protein Interaction</li>
+          <li>Structural Bioinformatics</li>
+          <li>Graph Representation Learning</li>
+        </ul>
+      </div>
+
+      <div class="hero__photo">
+        <img src="assets/img/ani.jpg" width="320" height="360"
+             alt="Portrait of Animesh Sachan" loading="eager" />
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section id="about" class="section">
+      <h2 class="section__title">About</h2>
+      <div class="prose">
+        <p>
+          I am a PhD Scholar and TCS Research Fellow in the
+          <strong>Department of Artificial Intelligence</strong> at
+          <strong>IIT Kharagpur</strong>, advised by
+          <a href="https://plaban.github.io/" target="_blank" rel="noopener">Prof. Plaban Kumar Bhowmick</a>
+          and
+          <a href="https://cse.iitkgp.ac.in/~pralay/" target="_blank" rel="noopener">Prof. Pralay Mitra</a>.
+        </p>
+        <p>
+          Graphs &mdash; whether social networks, biological structures, or neural
+          pathways &mdash; hold the keys to unlocking patterns that are otherwise hidden.
+          My work uses <strong>graph machine learning</strong> to decipher the language
+          of these connections. Concretely, my ongoing research designs graph neural
+          network frameworks that interpret protein structures to gain a deeper
+          understanding of their <strong>binding mechanisms</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== PUBLICATIONS ===================== -->
+    <section id="publications" class="section">
+      <h2 class="section__title">Publications</h2>
+      <p class="section__note">Author names in <strong>bold</strong> indicate me.</p>
+
+      <ol class="pubs" reversed>
+        <!-- 2024 -->
+        <li class="pub">
+          <span class="pub__badge">Preprint</span>
+          <div class="pub__body">
+            <h3 class="pub__title">
+              E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for
+              Protein&ndash;Protein Interaction Site Prediction
+            </h3>
+            <p class="pub__authors">
+              <strong>Animesh Sachan</strong>, Rishi Suvvada, Plaban Kumar Bhowmick, Pralay Mitra
+            </p>
+            <p class="pub__venue"><em>bioRxiv</em> (under review) · 2024</p>
+            <div class="pub__links">
+              <a href="https://www.biorxiv.org/content/early/2024/10/06/2024.10.06.616807.full.pdf" target="_blank" rel="noopener">PDF</a>
+              <a href="https://www.biorxiv.org/content/early/2024/10/06/2024.10.06.616807" target="_blank" rel="noopener">bioRxiv</a>
+              <a href="https://doi.org/10.1101/2024.10.06.616807" target="_blank" rel="noopener">DOI</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- 2022 -->
+        <li class="pub">
+          <span class="pub__badge">IJCNN</span>
+          <div class="pub__body">
+            <h3 class="pub__title">
+              Symbolic Hyperdimensional Vectors with Sparse Graph Convolutional Neural Networks
+            </h3>
+            <p class="pub__authors">
+              Filip Cornell, Jussi Karlgren, <strong>Animesh Sachan</strong>, Šarūnas Girdzijauskas
+            </p>
+            <p class="pub__venue">
+              International Joint Conference on Neural Networks (IJCNN) · 2022
+            </p>
+            <div class="pub__links">
+              <a href="https://ieeexplore.ieee.org/abstract/document/9892300" target="_blank" rel="noopener">IEEE</a>
+              <a href="https://doi.org/10.1109/IJCNN55064.2022.9892300" target="_blank" rel="noopener">DOI</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- 2020 -->
+        <li class="pub">
+          <span class="pub__badge">ICMICA</span>
+          <div class="pub__body">
+            <h3 class="pub__title">
+              Trajectory Tracking in a 3-DOF Robotic Manipulator using Sliding Mode Controller
+            </h3>
+            <p class="pub__authors">
+              <strong>Animesh Sachan</strong>, Jyoti Ohri
+            </p>
+            <p class="pub__venue">
+              IEEE Int. Conf. on Measurement, Instrumentation, Control and Automation (ICMICA) · 2020
+            </p>
+            <div class="pub__links">
+              <a href="https://ieeexplore.ieee.org/document/9242653" target="_blank" rel="noopener">IEEE</a>
+              <a href="https://doi.org/10.1109/ICMICA48462.2020.9242653" target="_blank" rel="noopener">DOI</a>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ===================== NEWS ===================== -->
+    <section id="news" class="section">
+      <h2 class="section__title">News</h2>
+      <!-- To add a news item, copy one <li> block and edit the date + text. -->
+      <ul class="news">
+        <li class="news__item">
+          <span class="news__date">Oct 2024</span>
+          <span class="news__text">
+            Our preprint <em>E(Q)AGNN-PPIS</em> is now available on
+            <a href="https://doi.org/10.1101/2024.10.06.616807" target="_blank" rel="noopener">bioRxiv</a>
+            (under review).
+          </span>
+        </li>
+        <li class="news__item">
+          <span class="news__date">Jul 2022</span>
+          <span class="news__text">
+            Presented work on sparse graph convolutional networks at
+            <strong>IJCNN 2022</strong>.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section id="contact" class="section">
+      <h2 class="section__title">Contact</h2>
+      <div class="contact">
+        <dl class="contact__list">
+          <div class="contact__row">
+            <dt>Email</dt>
+            <dd><a href="mailto:animesh.sachan24794@gmail.com">animesh.sachan24794@gmail.com</a></dd>
+          </div>
+          <div class="contact__row">
+            <dt>Office</dt>
+            <dd>AI Lab, Takshashila Building (1st floor)<br />IIT Kharagpur, West Bengal &mdash; 721302, India</dd>
+          </div>
+          <div class="contact__row">
+            <dt>Online</dt>
+            <dd>
+              <a href="https://github.com/ainimesh" target="_blank" rel="noopener">GitHub</a> ·
+              <a href="https://www.linkedin.com/in/animeshsachan" target="_blank" rel="noopener">LinkedIn</a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year">2026</span> Animesh Sachan · Built with plain HTML &amp; CSS.</p>
+    <p><a href="#top">Back to top ↑</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      // Year
+      var y = document.getElementById("year");
+      if (y) y.textContent = new Date().getFullYear();
+
+      // Theme toggle
+      var root = document.documentElement;
+      var btn = document.getElementById("theme-toggle");
+      function setIcon() {
+        var isDark = root.getAttribute("data-theme") === "dark";
+        btn.querySelector(".theme-toggle__icon").textContent = isDark ? "☀" : "🌙";
+        var label = isDark ? "Switch to light mode" : "Switch to dark mode";
+        btn.setAttribute("aria-pressed", String(isDark));
+        btn.setAttribute("aria-label", label);
+        btn.setAttribute("title", label);
+      }
+      setIcon();
+      btn.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        setIcon();
+      });
+
+      // Highlight the nav link of the section currently in view
+      var links = Array.prototype.slice.call(document.querySelectorAll(".nav__links a"));
+      var map = {};
+      links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+      if ("IntersectionObserver" in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            var a = map[en.target.id];
+            if (a && en.isIntersecting) {
+              links.forEach(function (l) { l.classList.remove("is-active"); });
+              a.classList.add("is-active");
+            }
+          });
+        }, { rootMargin: "-45% 0px -50% 0px" });
+        ["about", "publications", "news", "contact"].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) obs.observe(el);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
