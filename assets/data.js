@@ -36,6 +36,43 @@ window.SITE = {
   publications: [
     {
       year: 2026,
+      badge: "IJCAI DC",
+      title: "Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design",
+      authors: "Animesh Animesh",
+      venue: "IJCAI — Doctoral Consortium (Short Paper)",
+      paper: "",            // ← add the paper link when available
+      arxiv: "",
+      openreview: "",
+      code: "",
+      bibtex: `@inproceedings{animesh2026ijcaidc,
+  title     = {Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design},
+  author    = {Animesh Animesh},
+  booktitle = {International Joint Conference on Artificial Intelligence (IJCAI), Doctoral Consortium},
+  year      = {2026}
+}`,
+    },
+
+    {
+      year: 2026,
+      badge: "CRL @ RLC",
+      title: "GCT-MARL: Graph-Based Contrastive Transfer for Sample-Efficient Cooperative Multi-Agent Reinforcement Learning",
+      authors: "Animesh Animesh, Satheesh K. Perepu, Kaushik Dey",
+      venue: "Continual Reinforcement Learning Workshop @ RLC",
+      paper: "",
+      arxiv: "https://arxiv.org/abs/2606.25073",
+      openreview: "https://openreview.net/forum?id=Trc7ZxmNAM",
+      code: "https://github.com/ainimesh/GCT-MARL",
+      bibtex: `@inproceedings{animesh2026gctmarl,
+  title={{GCT}-{MARL}: Graph-Based Contrastive Transfer for Sample-Efficient Cooperative Multi-Agent Reinforcement Learning},
+  author={Animesh Animesh and Satheesh K Perepu and Kaushik Dey},
+  booktitle={Continual Reinforcement Learning Workshop at RLC 2026},
+  year={2026},
+  url={https://openreview.net/forum?id=Trc7ZxmNAM}
+}`,
+    },
+
+    {
+      year: 2026,
       badge: "arXiv",
       title: "GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction",
       authors: "Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
