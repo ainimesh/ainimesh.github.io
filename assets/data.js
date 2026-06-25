@@ -29,8 +29,8 @@ window.SITE = {
 
   /* ---------------------------------------------------------------------------
      PUBLICATIONS  (newest first) — shown grouped by year on publications.html.
-     links: any of  Paper · PDF · arXiv · OpenReview · Code  (or your own label).
-            Add a link by uncommenting/filling a line; empty/"#" links are hidden.
+     Every tile shows four link blocks: Paper · arXiv · OpenReview · Code.
+       paste a URL to activate a block; leave "" and it shows greyed-out.
      bibtex: the "Cite" button opens a popup with this text to copy.
      --------------------------------------------------------------------------- */
   publications: [
@@ -40,11 +40,10 @@ window.SITE = {
       title: "GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction",
       authors: "Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
       venue: "Preprint",
-      links: [
-        { label: "Paper", url: "https://arxiv.org/abs/2603.19817" },
-        // { label: "Code", url: "" },
-        // { label: "OpenReview", url: "" },
-      ],
+      paper: "",
+      arxiv: "https://arxiv.org/abs/2603.19817",
+      openreview: "",
+      code: "",
       bibtex: `@misc{gdegan,
   title={GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction},
   author={Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
@@ -61,11 +60,10 @@ window.SITE = {
       title: "E(Q)AGNN-PPIS: Attention Enhanced Equivariant Graph Neural Network for Protein–Protein Interaction Site Prediction",
       authors: "Animesh, Rishi Suvvada, Plaban Kumar Bhowmick, Pralay Mitra",
       venue: "IEEE Transactions on Signal and Information Processing over Networks",
-      links: [
-        { label: "Paper", url: "https://doi.org/10.1109/TSIPN.2025.3587396" },
-        // { label: "arXiv", url: "" },
-        // { label: "Code", url: "" },
-      ],
+      paper: "https://doi.org/10.1109/TSIPN.2025.3587396",
+      arxiv: "",
+      openreview: "",
+      code: "",
       bibtex: `@ARTICLE{eqagnn_ppis,
   author={Animesh and Suvvada, Rishi and Bhowmick, Plaban Kumar and Mitra, Pralay},
   journal={IEEE Transactions on Signal and Information Processing over Networks},
@@ -82,10 +80,10 @@ window.SITE = {
       title: "Symbolic Hyperdimensional Vectors with Sparse Graph Convolutional Neural Networks",
       authors: "Filip Cornell, Jussi Karlgren, Animesh, Šarūnas Girdzijauskas",
       venue: "International Joint Conference on Neural Networks (IJCNN)",
-      links: [
-        { label: "Paper", url: "https://doi.org/10.1109/IJCNN55064.2022.9892300" },
-        // { label: "Code", url: "" },
-      ],
+      paper: "https://doi.org/10.1109/IJCNN55064.2022.9892300",
+      arxiv: "",
+      openreview: "",
+      code: "",
       bibtex: `@inproceedings{cornell2022symbolic,
   title     = {Symbolic Hyperdimensional Vectors with Sparse Graph Convolutional Neural Networks},
   author    = {Cornell, Filip and Karlgren, Jussi and Animesh and Girdzijauskas, {\\v{S}}ar{\\=u}nas},
@@ -102,9 +100,10 @@ window.SITE = {
       title: "Trajectory Tracking in a 3-DOF Robotic Manipulator using Sliding Mode Controller",
       authors: "Animesh, Jyoti Ohri",
       venue: "IEEE Int. Conf. on Measurement, Instrumentation, Control and Automation (ICMICA)",
-      links: [
-        { label: "Paper", url: "https://doi.org/10.1109/ICMICA48462.2020.9242653" },
-      ],
+      paper: "https://doi.org/10.1109/ICMICA48462.2020.9242653",
+      arxiv: "",
+      openreview: "",
+      code: "",
       bibtex: `@inproceedings{sachan2020trajectory,
   title     = {Trajectory Tracking in a 3-DOF Robotic Manipulator using Sliding Mode Controller},
   author    = {Animesh and Ohri, Jyoti},

@@ -69,8 +69,17 @@
   }
 
   /* ---------- publications ---------- */
+  function pubLink(label, url) {
+    if (url && url !== "#")
+      return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + label + "</a>";
+    return '<span class="off" aria-disabled="true" title="' + label + ' — not available">' + label + "</span>";
+  }
   function pubCard(p, idx) {
-    var links = (p.links || []).filter(function (l) { return l && l.url && l.url !== "#"; })
+    // fixed blocks shown on every tile (greyed when no link); fill URLs in data.js
+    var links = pubLink("Paper", p.paper) + pubLink("arXiv", p.arxiv) +
+                pubLink("OpenReview", p.openreview) + pubLink("Code", p.code);
+    // optional extra links (e.g. PDF, bioRxiv) via a `links: [{label,url}]` array
+    var extra = (p.links || []).filter(function (l) { return l && l.url && l.url !== "#"; })
       .map(function (l) {
         return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + "</a>";
       }).join("");
@@ -82,7 +91,7 @@
           '<h3 class="pub__title">' + esc(p.title) + "</h3>" +
           '<p class="pub__authors">' + boldName(p.authors) + "</p>" +
           '<p class="pub__venue">' + esc(p.venue || "") + (p.year ? " · " + esc(p.year) : "") + "</p>" +
-          '<div class="pub__links">' + links + cite + "</div>" + bib +
+          '<div class="pub__links">' + links + extra + cite + "</div>" + bib +
         "</div></li>";
   }
 

@@ -287,6 +287,12 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
   background: var(--bg);
 }
 .pub__links a:hover { background: var(--surface-2); text-decoration: none; border-color: var(--accent); }
+/* greyed-out placeholder block (no link yet) */
+.pub__links .off {
+  font-size: 0.82rem; font-weight: 600;
+  padding: 3px 11px; border: 1px dashed var(--border); border-radius: 7px;
+  color: var(--muted); opacity: 0.55; background: transparent; cursor: default;
+}
 
 /* ---------- News ---------- */
 .news { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
@@ -502,8 +508,12 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 .year-group { margin-bottom: 30px; }
 .year-group:last-child { margin-bottom: 0; }
 .year-group__label {
-  margin: 0 0 14px; font-size: 1.3rem; font-weight: 800;
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 0 16px; font-size: 1.3rem; font-weight: 800;
   letter-spacing: -0.01em; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.year-group__label::after {
+  content: ""; flex: 1; height: 2px; border-radius: 2px; background: var(--border);
 }
 
 /* ---------- academic service ---------- */
