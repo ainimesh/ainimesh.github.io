@@ -1,26 +1,35 @@
 /* =============================================================================
-   site.js — rendering engine. You normally do NOT need to edit this file.
-   Content lives in assets/data.js.
+   site.js — rendering engine. You normally do NOT edit this; content is in
+   assets/data.js.
    ============================================================================= */
 (function () {
   "use strict";
   var DATA = window.SITE || {};
 
-  /* ---------- tiny helpers ---------- */
-  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $(s, r) { return (r || document).querySelector(s); }
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
+  function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  /* bold the author's name — matches any alias ("Animesh Sachan" or "Animesh"),
+     longest first, and never double-wraps. */
   function boldName(authors) {
-    var a = esc(authors);
-    var me = esc(DATA.me || "");
-    if (me) a = a.split(me).join("<strong>" + me + "</strong>");
-    return a;
+    var s = esc(authors);
+    var aliases = (DATA.meAliases && DATA.meAliases.length)
+      ? DATA.meAliases.slice()
+      : [DATA.me, (DATA.me || "").split(" ")[0]];
+    aliases = aliases.filter(Boolean).sort(function (a, b) { return b.length - a.length; });
+    aliases.forEach(function (name) {
+      var re = new RegExp("(^|[^\\w<>])(" + reEsc(esc(name)) + ")(?![\\w])", "g");
+      s = s.replace(re, function (m, pre, hit) { return pre + "<strong>" + hit + "</strong>"; });
+    });
+    return s;
   }
 
-  /* ---------- brand icons (24×24, paths from simpleicons.org) ---------- */
+  /* ---------- brand icons (paths from simpleicons.org) ---------- */
   var ICONS = {
     email: 'M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z',
     github: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12',
@@ -36,17 +45,14 @@
     googlescholar: "Google Scholar", x: "X", youtube: "YouTube",
     researchgate: "ResearchGate", orcid: "ORCID",
   };
-
   function svgIcon(net) {
-    var d = ICONS[net];
-    if (!d) return "";
+    var d = ICONS[net]; if (!d) return "";
     return '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">' +
            '<path fill="currentColor" d="' + d + '"/></svg>';
   }
 
-  /* ---------- social icon rows ---------- */
   function renderSocials() {
-    var list = (DATA.socials || []);
+    var list = DATA.socials || [];
     document.querySelectorAll("[data-socials]").forEach(function (box) {
       var excl = (box.getAttribute("data-socials-exclude") || "")
         .split(",").map(function (s) { return s.trim(); }).filter(Boolean);
@@ -54,77 +60,113 @@
         .filter(function (s) { return ICONS[s.network] && excl.indexOf(s.network) === -1; })
         .map(function (s) {
           var label = LABELS[s.network] || s.network;
-          var disabled = (!s.url || s.url === "#");
-          return '<a class="social' + (disabled ? " social--off" : "") + '" href="' +
-            esc(s.url || "#") + '"' + (disabled ? "" : ' target="_blank" rel="noopener"') +
-            ' aria-label="' + esc(label) + '" title="' + esc(label) + '">' +
-            svgIcon(s.network) + "</a>";
+          var off = (!s.url || s.url === "#");
+          return '<a class="social' + (off ? " social--off" : "") + '" href="' + esc(s.url || "#") + '"' +
+            (off ? "" : ' target="_blank" rel="noopener"') +
+            ' aria-label="' + esc(label) + '" title="' + esc(label) + '">' + svgIcon(s.network) + "</a>";
         }).join("");
     });
   }
 
   /* ---------- publications ---------- */
   function pubCard(p, idx) {
-    var links = (p.links || []).map(function (l) {
-      return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + "</a>";
-    }).join("");
-    var cite = p.bibtex
-      ? '<button class="pub__cite" type="button" data-cite="' + idx + '">Cite</button>'
-      : "";
-    var bib = p.bibtex
-      ? '<pre class="pub__bibtex" id="bibtex-' + idx + '" hidden>' + esc(p.bibtex) + "</pre>"
-      : "";
-    return '' +
-      '<li class="pub">' +
+    var links = (p.links || []).filter(function (l) { return l && l.url && l.url !== "#"; })
+      .map(function (l) {
+        return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + "</a>";
+      }).join("");
+    var cite = p.bibtex ? '<button class="pub__cite" type="button" data-cite="' + idx + '">Cite</button>' : "";
+    var bib = p.bibtex ? '<pre class="pub__bibtex" id="bibtex-' + idx + '" hidden>' + esc(p.bibtex) + "</pre>" : "";
+    return '<li class="pub">' +
         '<span class="pub__badge">' + esc(p.badge || p.year || "") + "</span>" +
         '<div class="pub__body">' +
           '<h3 class="pub__title">' + esc(p.title) + "</h3>" +
           '<p class="pub__authors">' + boldName(p.authors) + "</p>" +
-          '<p class="pub__venue">' + esc(p.venue || "") +
-            (p.year ? ' · ' + esc(p.year) : "") + "</p>" +
-          '<div class="pub__links">' + links + cite + "</div>" +
-          bib +
-        "</div>" +
-      "</li>";
+          '<p class="pub__venue">' + esc(p.venue || "") + (p.year ? " · " + esc(p.year) : "") + "</p>" +
+          '<div class="pub__links">' + links + cite + "</div>" + bib +
+        "</div></li>";
   }
 
   function renderPublications() {
     var box = $("#pub-list");
     if (!box) return;
-    var all = (DATA.publications || []).slice().sort(function (a, b) {
-      return (b.year || 0) - (a.year || 0);
-    });
+    var all = (DATA.publications || []).slice().sort(function (a, b) { return (b.year || 0) - (a.year || 0); });
     var limit = parseInt(box.getAttribute("data-limit"), 10);
-    var shown = isNaN(limit) ? all : all.slice(0, limit);
-    box.innerHTML = '<ol class="pubs">' +
-      shown.map(function (p) { return pubCard(p, all.indexOf(p)); }).join("") + "</ol>";
+    var grouped = box.getAttribute("data-group") === "year";
 
-    if (!isNaN(limit) && all.length > limit) {
-      var more = document.createElement("div");
-      more.className = "more";
-      more.innerHTML = '<a class="btn" href="publications.html">All ' +
-        all.length + ' publications →</a>';
-      box.appendChild(more);
+    if (grouped) {
+      var byYear = {};
+      all.forEach(function (p) { (byYear[p.year] = byYear[p.year] || []).push(p); });
+      box.innerHTML = Object.keys(byYear).sort(function (a, b) { return b - a; }).map(function (y) {
+        return '<div class="year-group"><h2 class="year-group__label">' + esc(y) + "</h2>" +
+          '<ol class="pubs">' + byYear[y].map(function (p) { return pubCard(p, all.indexOf(p)); }).join("") + "</ol></div>";
+      }).join("");
+    } else {
+      var shown = isNaN(limit) ? all : all.slice(0, limit);
+      box.innerHTML = '<ol class="pubs">' + shown.map(function (p) { return pubCard(p, all.indexOf(p)); }).join("") + "</ol>";
+      if (!isNaN(limit)) {
+        var more = document.createElement("div");
+        more.className = "more";
+        more.innerHTML = '<a class="btn" href="publications.html">All publications →</a>';
+        box.appendChild(more);
+      }
     }
-
-    // Cite → reveal the BibTeX block and copy it to the clipboard
-    box.addEventListener("click", function (e) {
-      var btn = e.target.closest("[data-cite]");
-      if (!btn) return;
-      var pre = $("#bibtex-" + btn.getAttribute("data-cite"));
-      if (!pre) return;
-      pre.hidden = false;            // show it (stays visible after copying)
-      copyText(pre.textContent, btn); // textContent = raw BibTeX, entities decoded
-    });
   }
+
+  /* ---------- Cite popup (modal) ---------- */
+  var openCiteId = null;
+  function ensureModal() {
+    var m = $("#cite-modal");
+    if (m) return m;
+    m = document.createElement("div");
+    m.id = "cite-modal"; m.className = "modal"; m.hidden = true;
+    m.innerHTML =
+      '<div class="modal__backdrop" data-close></div>' +
+      '<div class="modal__dialog" role="dialog" aria-modal="true" aria-label="BibTeX citation">' +
+        '<div class="modal__head">' +
+          '<span class="modal__title">BibTeX</span>' +
+          '<button class="modal__copy" type="button">Copy</button>' +
+          '<button class="modal__close" type="button" aria-label="Close" data-close>×</button>' +
+        "</div>" +
+        '<pre class="modal__pre"></pre>' +
+      "</div>";
+    document.body.appendChild(m);
+    m.addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeModal(); });
+    m.querySelector(".modal__copy").addEventListener("click", function () {
+      copyText(m.querySelector(".modal__pre").textContent, this);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+    return m;
+  }
+  function openModal(text, id) {
+    var m = ensureModal();
+    m.querySelector(".modal__pre").textContent = text;
+    m.querySelector(".modal__copy").textContent = "Copy";
+    m.querySelector(".modal__copy").classList.remove("is-copied");
+    m.hidden = false;
+    document.body.classList.add("modal-open");
+    openCiteId = id;
+  }
+  function closeModal() {
+    var m = $("#cite-modal"); if (m) m.hidden = true;
+    document.body.classList.remove("modal-open");
+    openCiteId = null;
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-cite]");
+    if (!btn) return;
+    var id = btn.getAttribute("data-cite");
+    if (openCiteId === id) { closeModal(); return; }   // click Cite again to close
+    var pre = $("#bibtex-" + id);
+    openModal(pre ? pre.textContent : "", id);
+  });
 
   function copyText(text, btn) {
     if (!text) return;
     var done = function () {
       if (!btn) return;
-      var old = btn.textContent;
-      btn.textContent = "Copied!";
-      btn.classList.add("is-copied");
+      var old = btn.getAttribute("data-label") || btn.textContent;
+      btn.setAttribute("data-label", old);
+      btn.textContent = "Copied!"; btn.classList.add("is-copied");
       setTimeout(function () { btn.textContent = old; btn.classList.remove("is-copied"); }, 1600);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -134,60 +176,67 @@
       try {
         var ta = document.createElement("textarea");
         ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
-        document.body.appendChild(ta); ta.select();
-        document.execCommand("copy"); document.body.removeChild(ta); done();
+        document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+        document.body.removeChild(ta); done();
       } catch (e) {}
     }
   }
 
   /* ---------- news ---------- */
   function newsItem(n) {
-    return '<li class="news__item">' +
-      '<span class="news__date">' + esc(n.date) + "</span>" +
+    return '<li class="news__item"><span class="news__date">' + esc(n.date) + "</span>" +
       '<span class="news__text">' + (n.html || "") + "</span></li>";
   }
-
   function renderNews() {
     var box = $("#news-list");
     if (!box) return;
-    var all = (DATA.news || []);
+    var all = DATA.news || [];
     var limit = parseInt(box.getAttribute("data-limit"), 10);
     var grouped = box.getAttribute("data-group") === "year";
 
     if (grouped) {
       var byYear = {};
       all.forEach(function (n) { (byYear[n.year] = byYear[n.year] || []).push(n); });
-      var years = Object.keys(byYear).sort(function (a, b) { return b - a; });
-      box.innerHTML = years.map(function (y) {
-        return '<div class="news-year">' +
-          '<h2 class="news-year__label">' + esc(y) + "</h2>" +
+      box.innerHTML = Object.keys(byYear).sort(function (a, b) { return b - a; }).map(function (y) {
+        return '<div class="year-group"><h2 class="year-group__label">' + esc(y) + "</h2>" +
           '<ul class="news">' + byYear[y].map(newsItem).join("") + "</ul></div>";
       }).join("");
       return;
     }
-
     var shown = isNaN(limit) ? all : all.slice(0, limit);
     box.innerHTML = '<ul class="news">' + shown.map(newsItem).join("") + "</ul>";
-    if (!isNaN(limit) && all.length > limit) {
+    if (!isNaN(limit)) {
       var more = document.createElement("div");
       more.className = "more";
-      more.innerHTML = '<a class="btn" href="news.html">All news →</a>';
+      more.innerHTML = '<a class="btn" href="news.html">More news →</a>';
       box.appendChild(more);
     }
   }
 
-  /* ---------- experience (timeline) ---------- */
-  function renderExperience() {
-    var box = $("#experience-list");
+  /* ---------- academic service ---------- */
+  function renderService() {
+    var box = $("#service-list");
     if (!box) return;
-    var items = (DATA.experience || []);
+    box.innerHTML = (DATA.service || []).map(function (g) {
+      var items = (g.items || []).map(function (i) { return "<span>" + esc(i) + "</span>"; }).join("");
+      return '<div class="service"><h3 class="service__role">' + esc(g.role) + "</h3>" +
+        '<div class="service__items">' + items + "</div></div>";
+    }).join("");
+  }
+
+  /* ---------- journey (timeline) ---------- */
+  function renderJourney() {
+    var box = $("#journey-list");
+    if (!box) return;
+    var items = DATA.journey || [];
     box.className = "timeline";
     box.innerHTML = items.map(function (x, i) {
       var pts = (x.points || []).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("");
-      return '<div class="tl-item' + (i % 2 ? " tl-item--right" : " tl-item--left") + '">' +
+      var kind = x.kind ? '<span class="tl-kind">' + esc(x.kind) + "</span>" : "";
+      return '<div class="tl-item ' + (i % 2 ? "tl-item--right" : "tl-item--left") + '">' +
         '<div class="tl-dot" aria-hidden="true"></div>' +
         '<div class="tl-card">' +
-          '<span class="tl-period">' + esc(x.period) + "</span>" +
+          '<div class="tl-meta"><span class="tl-period">' + esc(x.period) + "</span>" + kind + "</div>" +
           '<h3 class="tl-role">' + esc(x.role) + "</h3>" +
           '<p class="tl-org">' + esc(x.org) +
             (x.location ? ' · <span class="tl-loc">' + esc(x.location) + "</span>" : "") + "</p>" +
@@ -200,59 +249,48 @@
   function renderTeaching() {
     var box = $("#teaching-list");
     if (!box) return;
-    var items = (DATA.teaching || []);
     box.className = "tiles";
-    box.innerHTML = items.map(function (t) {
+    box.innerHTML = (DATA.teaching || []).map(function (t) {
       var pts = (t.points || []).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("");
       var link = (t.url && t.url !== "#")
-        ? '<a class="tile__link" href="' + esc(t.url) + '" target="_blank" rel="noopener">Course page →</a>'
-        : "";
-      return '<article class="tile">' +
-        '<span class="tile__term">' + esc(t.term) + "</span>" +
+        ? '<a class="tile__link" href="' + esc(t.url) + '" target="_blank" rel="noopener">Course page →</a>' : "";
+      return '<article class="tile"><span class="tile__term">' + esc(t.term) + "</span>" +
         '<h3 class="tile__course">' + esc(t.course) + "</h3>" +
-        '<p class="tile__meta">' + esc(t.role) +
-          (t.institution ? ' · ' + esc(t.institution) : "") + "</p>" +
-        (pts ? '<ul class="tile__points">' + pts + "</ul>" : "") +
-        link +
-      "</article>";
+        '<p class="tile__meta">' + esc(t.role) + (t.institution ? " · " + esc(t.institution) : "") + "</p>" +
+        (pts ? '<ul class="tile__points">' + pts + "</ul>" : "") + link + "</article>";
     }).join("");
   }
 
-  /* ---------- theme toggle + footer year (every page) ---------- */
+  /* ---------- chrome: theme toggle + year ---------- */
   function initChrome() {
     var y = $("#year"); if (y) y.textContent = new Date().getFullYear();
-    var root = document.documentElement;
-    var btn = $("#theme-toggle");
-    if (btn) {
-      var setIcon = function () {
-        var isDark = root.getAttribute("data-theme") === "dark";
-        var ic = btn.querySelector(".theme-toggle__icon");
-        if (ic) ic.textContent = isDark ? "☀" : "🌙";
-        var label = isDark ? "Switch to light mode" : "Switch to dark mode";
-        btn.setAttribute("aria-pressed", String(isDark));
-        btn.setAttribute("aria-label", label);
-        btn.setAttribute("title", label);
-      };
-      setIcon();
-      btn.addEventListener("click", function () {
-        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-        root.setAttribute("data-theme", next);
-        try { localStorage.setItem("theme", next); } catch (e) {}
-        setIcon();
-      });
+    var root = document.documentElement, btn = $("#theme-toggle");
+    if (!btn) return;
+    function setIcon() {
+      var isDark = root.getAttribute("data-theme") === "dark";
+      var ic = btn.querySelector(".theme-toggle__icon"); if (ic) ic.textContent = isDark ? "☀" : "🌙";
+      var label = isDark ? "Switch to light mode" : "Switch to dark mode";
+      btn.setAttribute("aria-pressed", String(isDark));
+      btn.setAttribute("aria-label", label); btn.setAttribute("title", label);
     }
+    setIcon();
+    btn.addEventListener("click", function () {
+      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      setIcon();
+    });
   }
 
-  /* ---------- go ---------- */
   function init() {
     initChrome();
     renderSocials();
     renderPublications();
     renderNews();
-    renderExperience();
+    renderService();
+    renderJourney();
     renderTeaching();
   }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else { init(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();

@@ -493,3 +493,74 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
   .tl-item--left .tl-dot, .tl-item--right .tl-dot { left: 1px; right: auto; }
   .tiles { grid-template-columns: 1fr; }
 }
+
+/* =========================================================
+   ADDED COMPONENTS — pubs/news grouping, service, journey tag, cite popup
+   ========================================================= */
+
+/* ---------- year groups (publications + news pages) ---------- */
+.year-group { margin-bottom: 30px; }
+.year-group:last-child { margin-bottom: 0; }
+.year-group__label {
+  margin: 0 0 14px; font-size: 1.3rem; font-weight: 800;
+  letter-spacing: -0.01em; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+
+/* ---------- academic service ---------- */
+#service-list { display: grid; gap: 18px; }
+.service__role {
+  margin: 0 0 8px; font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.01em; color: var(--accent);
+}
+.service__items { display: flex; flex-wrap: wrap; align-items: baseline; }
+.service__items span { color: var(--text); font-size: 0.96rem; }
+.service__items span:not(:last-child)::after {
+  content: "·"; margin: 0 10px; color: var(--muted);
+}
+
+/* ---------- journey: period + kind tag ---------- */
+.tl-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.tl-meta .tl-period { margin-bottom: 0; }
+.tl-kind {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 2px 8px; border-radius: 999px;
+}
+
+/* ---------- cite popup (modal) ---------- */
+.modal[hidden] { display: none; }
+.modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal__backdrop { position: absolute; inset: 0; background: rgba(8, 12, 20, 0.55); }
+.modal__dialog {
+  position: relative; z-index: 1; width: 100%; max-width: 640px; max-height: 82vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 14px; box-shadow: var(--shadow);
+}
+.modal__head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+}
+.modal__title { font-weight: 700; margin-right: auto; }
+.modal__copy {
+  font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  padding: 5px 14px; border-radius: 8px;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent);
+}
+.modal__copy.is-copied { background: var(--accent-ink); border-color: var(--accent-ink); }
+.modal__close {
+  font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer;
+  background: none; border: none; color: var(--muted); padding: 0 4px;
+}
+.modal__close:hover { color: var(--text); }
+.modal__pre {
+  margin: 0; padding: 16px; overflow: auto; color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem; line-height: 1.5; white-space: pre;
+}
+body.modal-open { overflow: hidden; }
