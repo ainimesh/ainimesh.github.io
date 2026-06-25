@@ -36,7 +36,7 @@ window.SITE = {
   publications: [
     {
       year: 2026,
-      badge: "IJCAI DC",
+      badge: "IJCAI",
       title: "Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design",
       authors: "Animesh Animesh",
       venue: "IJCAI — Doctoral Consortium (Short Paper)",
@@ -157,14 +157,74 @@ window.SITE = {
      --------------------------------------------------------------------------- */
   news: [
     {
-      date: "Oct 2024",
-      year: 2024,
-      html: `Our preprint <em>E(Q)AGNN-PPIS</em> is now available on <a href="https://doi.org/10.1101/2024.10.06.616807" target="_blank" rel="noopener">bioRxiv</a> (under review).`,
+      date: "Jun 2026",
+      year: 2026,
+      html: `Our paper was accepted at the <strong>Continual RL Workshop</strong>, Reinforcement Learning Conference (RLC) 2026, Montréal, Canada.`,
+    },
+    {
+      date: "Jun 2026",
+      year: 2026,
+      html: `Awarded a travel grant by <strong>IJCAI 2026</strong>.`,
+    },
+    {
+      date: "May 2026",
+      year: 2026,
+      html: `Short paper (Doctoral Consortium) accepted at <strong>IJCAI 2026</strong>.`,
+    },
+    {
+      date: "Dec 2025",
+      year: 2025,
+      html: `Selected for a 6-month research internship at <strong>Ericsson Research</strong>, Bengaluru, India.`,
+    },
+    {
+      date: "Jul 2025",
+      year: 2025,
+      html: `Attended <strong>MLSS<sup>D</sup> 2025</strong> in Kraków, Poland, and presented a research poster.`,
+    },
+    {
+      date: "Jun 2025",
+      year: 2025,
+      html: `My PhD Consortium submission was accepted at <strong>KDD 2025</strong>.`,
+    },
+    {
+      date: "Jun 2025",
+      year: 2025,
+      html: `Our paper was accepted in <strong>IEEE Transactions on Signal and Information Processing over Networks (TSIPN)</strong>.`,
+    },
+    {
+      date: "Mar 2025",
+      year: 2025,
+      html: `Accepted to attend <strong>MLSS<sup>D</sup> 2025</strong> in Kraków, Poland.`,
+    },
+    {
+      date: "Mar 2025",
+      year: 2025,
+      html: `Selected to attend the <strong>ELLIS Winter School on Foundation Models (FoMo)</strong> at the University of Amsterdam, Netherlands.`,
+    },
+    {
+      date: "Dec 2023",
+      year: 2023,
+      html: `Delivered my PhD registration seminar successfully.`,
+    },
+    {
+      date: "Oct 2023",
+      year: 2023,
+      html: `Invited as a guest lecturer for a 5-day Machine Learning workshop at D.Y. Patil University, Pune.`,
+    },
+    {
+      date: "Jul 2023",
+      year: 2023,
+      html: `Selected for the prestigious <strong>TCS Research Fellowship</strong> for the next four years.`,
     },
     {
       date: "Jul 2022",
       year: 2022,
-      html: `Presented work on sparse graph convolutional networks at <strong>IJCNN 2022</strong>.`,
+      html: `Our paper was accepted at <strong>IJCNN 2022</strong> — collaborative work with KTH Royal Institute of Technology, Sweden.`,
+    },
+    {
+      date: "Aug 2021",
+      year: 2021,
+      html: `Joined the PhD program at the Department of Artificial Intelligence, <strong>IIT Kharagpur</strong>. 🎉`,
     },
   ],
 
