@@ -7,11 +7,11 @@
   color-scheme: light;
 
   /* ---- FONTS: change these two lines to restyle the whole site ----
-     Ready to use out of the box:  "Inter" (sans)  ·  "Lora" (serif)  ·  system-ui
+     Ready to use out of the box:  "Inter" (sans)  ·  "Lora" / "Bree Serif" (serif)  ·  system-ui
      For any other Google Font, also add it to the <link> in each page's <head>.
-     e.g. serif headings:  --font-heading: "Lora", Georgia, serif;  */
+     e.g. sans headings:  --font-heading: "Inter", system-ui, sans-serif;  */
   --font:         "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-heading: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-heading: "Bree Serif", Georgia, "Times New Roman", serif;
 
   --bg:        #ffffff;
   --surface:   #f6f8f9;
