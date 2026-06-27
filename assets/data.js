@@ -298,15 +298,45 @@ window.SITE = {
      TEACHING  (newest first) — tiles. url: course page ("" to hide the link).
      --------------------------------------------------------------------------- */
   teaching: [
-    // ----- EXAMPLE tile — edit or delete -----
     {
-      term: "Autumn 20XX",
-      course: "AI21001 — Course Name",
+      term: "Autumn 2025–26",
+      course: "AI60213 — Foundation of Large Language Models (FLLMs)",
+      role: "Teaching Assistant",
+      institution: "IIT Kharagpur",
+      points: [],
+      url: "https://plaban.github.io/fllm-aut25/",
+    },
+    {
+      term: "Autumn 2022–23, 2023–24, 2024–25",
+      course: "AI60007 — Graph ML Foundations and Applications (GMLFA)",
+      role: "Teaching Assistant · 3 offerings",
+      institution: "IIT Kharagpur",
+      points: [],
+      url: "https://ainimesh.github.io/gmlfa_autumn_2024/",
+    },
+    {
+      term: "Spring 2021–22",
+      course: "AI42001 — Machine Learning Foundations and Applications (MLFA)",
+      role: "Teaching Assistant",
+      institution: "IIT Kharagpur",
+      points: [],
+      url: "",
+    },
+    {
+      term: "Spring 2022–25",
+      course: "AI60004 — Big Data Processing (BDP)",
+      role: "Teaching Assistant",
+      institution: "IIT Kharagpur",
+      points: [],
+      url: "",
+    },
+    {
+      term: "Summer School",
+      course: "Mathematics of Machine Learning (MOML)",
       role: "Teaching Assistant",
       institution: "IIT Kharagpur",
       points: [
-        "Conducted weekly tutorials and lab sessions.",
-        "Designed and graded assignments and exams.",
+        "Delivered coding tutorials on SVM, PCA, and their practical applications.",
       ],
       url: "",
     },
