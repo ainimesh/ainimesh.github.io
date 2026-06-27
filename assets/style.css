@@ -63,8 +63,8 @@ body {
 }
 img { max-width: 100%; }
 
-/* all headings use the heading font; everything else uses --font */
-h1, h2, h3 { font-family: var(--font-heading); }
+/* all headings (and the nav brand) use the heading font; everything else uses --font */
+h1, h2, h3, .nav__brand { font-family: var(--font-heading); }
 
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
