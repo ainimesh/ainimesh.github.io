@@ -217,7 +217,7 @@
     if (!isNaN(limit)) {
       var more = document.createElement("div");
       more.className = "more";
-      more.innerHTML = '<a class="btn" href="news.html">More news →</a>';
+      more.innerHTML = '<a class="btn" href="news.html">More →</a>';
       box.appendChild(more);
     }
   }
