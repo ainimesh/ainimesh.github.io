@@ -236,7 +236,7 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 .section { padding: 36px 0; border-top: 1px solid var(--border); }
 .section__title {
   margin: 0 0 18px;
-  font-size: 1.65rem;
+  font-size: 1.85rem;
   letter-spacing: -0.02em;
   position: relative;
   padding-bottom: 8px;
