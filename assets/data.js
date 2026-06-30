@@ -254,8 +254,18 @@ window.SITE = {
      points: optional bullet lines.
      --------------------------------------------------------------------------- */
   journey: [
+    // ----- EXAMPLE: internship — edit or delete -----
     {
-      period: "20XX – Present",            // ← set your PhD start year
+      period: "December-2025 - June 2026",
+      kind: "Research Internship",
+      role: "MARL Research Intern",
+      org: "Ericsson Research",
+      location: "Banglore, India.",
+      points: ["Enabling efficient tranfer using GNNs in Multi-Agent Reinforcement Learning"],
+    },
+
+    {
+      period: "August, 2021 – Present",            // ← set your PhD start year
       kind: "Doctorate",
       role: "PhD Research Scholar (TCS Research Fellow)",
       org: "Department of Artificial Intelligence, IIT Kharagpur",
@@ -264,15 +274,6 @@ window.SITE = {
         "Equivariant graph neural networks for protein structure analysis and binding-site prediction.",
         "Advised by Prof. Plaban Kumar Bhowmick and Prof. Pralay Mitra.",
       ],
-    },
-    // ----- EXAMPLE: internship — edit or delete -----
-    {
-      period: "20XX",
-      kind: "Internship",
-      role: "Research Intern",
-      org: "Lab / company",
-      location: "City, Country",
-      points: ["What you worked on."],
     },
     // ----- EXAMPLE: M.Tech — edit or delete -----
     {
