@@ -352,6 +352,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 .footer a:hover { color: var(--accent); }
 .footer__copy { margin: 0; }
 .footer__socials { justify-content: center; }
+.footer__visitors { margin-top: 4px; }
+.footer__visitors img { display: block; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 640px) {
