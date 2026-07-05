@@ -255,6 +255,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
 .prose p { margin: 0 0 16px; }
 .prose p:last-child { margin-bottom: 0; }
+.prose .availability { color: #15803d; }         /* green-700 */
+[data-theme="dark"] .prose .availability { color: #4ade80; }  /* green-400 */
+.prose .availability a { color: #14532d; font-weight: 600; }  /* green-900 */
+[data-theme="dark"] .prose .availability a { color: #86efac; font-weight: 600; } /* green-300 */
 
 /* ---------- Publications ---------- */
 .pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
