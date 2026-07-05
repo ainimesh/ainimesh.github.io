@@ -255,10 +255,20 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
 .prose p { margin: 0 0 16px; }
 .prose p:last-child { margin-bottom: 0; }
-.prose .availability { color: #15803d; }         /* green-700 */
-[data-theme="dark"] .prose .availability { color: #4ade80; }  /* green-400 */
-.prose .availability a { color: #14532d; font-weight: 600; }  /* green-900 */
-[data-theme="dark"] .prose .availability a { color: #86efac; font-weight: 600; } /* green-300 */
+.prose .availability {
+  color: #15803d;
+  background: #f0fdf4;
+  border-left: 3px solid #86efac;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+[data-theme="dark"] .prose .availability {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.07);
+  border-left-color: #166534;
+}
+.prose .availability a { color: #14532d; font-weight: 600; }
+[data-theme="dark"] .prose .availability a { color: #86efac; font-weight: 600; }
 
 /* ---------- Publications ---------- */
 .pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
