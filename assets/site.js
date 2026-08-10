@@ -77,7 +77,8 @@
   function pubCard(p, idx) {
     // fixed blocks shown on every tile (greyed when no link); fill URLs in data.js
     var links = pubLink("Paper", p.paper) + pubLink("arXiv", p.arxiv) +
-                pubLink("OpenReview", p.openreview) + pubLink("Code", p.code);
+                pubLink("OpenReview", p.openreview) + pubLink("Code", p.code) +
+                pubLink("Poster", p.poster);
     // optional extra links (e.g. PDF, bioRxiv) via a `links: [{label,url}]` array
     var extra = (p.links || []).filter(function (l) { return l && l.url && l.url !== "#"; })
       .map(function (l) {

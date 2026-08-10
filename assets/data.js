@@ -29,8 +29,10 @@ window.SITE = {
 
   /* ---------------------------------------------------------------------------
      PUBLICATIONS  (newest first) — shown grouped by year on publications.html.
-     Every tile shows four link blocks: Paper · arXiv · OpenReview · Code.
+     Every tile shows five link blocks: Paper · arXiv · OpenReview · Code · Poster.
        paste a URL to activate a block; leave "" and it shows greyed-out.
+     poster: drop the PDF in assets/papers/ and point to it, e.g.
+       poster: "assets/papers/my-poster.pdf"   (use dashes, no spaces or @)
      bibtex: the "Cite" button opens a popup with this text to copy.
      --------------------------------------------------------------------------- */
   publications: [
@@ -44,6 +46,7 @@ window.SITE = {
       arxiv: "",
       openreview: "",
       code: "",
+      poster: "",
       bibtex: `@inproceedings{animesh2026ijcaidc,
   title     = {Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design},
   author    = {Animesh Animesh},
@@ -62,6 +65,7 @@ window.SITE = {
       arxiv: "https://arxiv.org/abs/2606.25073",
       openreview: "https://openreview.net/forum?id=Trc7ZxmNAM",
       code: "https://github.com/ainimesh/GCT-MARL",
+      poster: "assets/papers/gct-marl-poster.pdf",
       bibtex: `@inproceedings{animesh2026gctmarl,
   title={{GCT}-{MARL}: Graph-Based Contrastive Transfer for Sample-Efficient Cooperative Multi-Agent Reinforcement Learning},
   author={Animesh Animesh and Satheesh K Perepu and Kaushik Dey},
@@ -81,6 +85,7 @@ window.SITE = {
       arxiv: "https://arxiv.org/abs/2603.19817",
       openreview: "",
       code: "",
+      poster: "",
       bibtex: `@misc{gdegan,
   title={GDEGAN: Gaussian Dynamic Equivariant Graph Attention Network for Ligand Binding Site Prediction},
   author={Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
@@ -101,6 +106,7 @@ window.SITE = {
       arxiv: "https://www.biorxiv.org/content/10.1101/2024.10.06.616807v2",
       openreview: "",
       code: "https://github.com/ainimesh/EQAGNN-PPIS",
+      poster: "",
       bibtex: `@ARTICLE{eqagnn_ppis,
   author={Animesh and Suvvada, Rishi and Bhowmick, Plaban Kumar and Mitra, Pralay},
   journal={IEEE Transactions on Signal and Information Processing over Networks},
@@ -121,6 +127,7 @@ window.SITE = {
       arxiv: "",
       openreview: "",
       code: "",
+      poster: "",
       bibtex: `@inproceedings{cornell2022symbolic,
   title     = {Symbolic Hyperdimensional Vectors with Sparse Graph Convolutional Neural Networks},
   author    = {Cornell, Filip and Karlgren, Jussi and Animesh and Girdzijauskas, {\\v{S}}ar{\\=u}nas},
@@ -141,6 +148,7 @@ window.SITE = {
       arxiv: "",
       openreview: "",
       code: "",
+      poster: "",
       bibtex: `@inproceedings{sachan2020trajectory,
   title     = {Trajectory Tracking in a 3-DOF Robotic Manipulator using Sliding Mode Controller},
   author    = {Animesh and Ohri, Jyoti},
