@@ -37,6 +37,27 @@ jobs:
           #   Settings → Pages → Build and deployment → Source = "GitHub Actions".
           enablement: true
 
+      # Rewrites  style.css?v=… / site.js?v=… / data.js?v=…  in every .html to the
+      # commit SHA, so a content change always produces a new URL and browsers
+      # fetch it immediately. You never need to bump ?v=N by hand.
+      - name: Stamp asset versions (cache-busting)
+        run: |
+          python3 - <<'PY'
+          import os, re, pathlib
+          sha = os.environ["GITHUB_SHA"][:8]
+          pat = re.compile(r"(style\.css|site\.js|data\.js)\?v=[^\"']*")
+          n = 0
+          for p in sorted(pathlib.Path(".").rglob("*.html")):
+              if ".git" in p.parts:
+                  continue
+              t = p.read_text(encoding="utf-8")
+              new = pat.sub(lambda m: m.group(1) + "?v=" + sha, t)
+              if new != t:
+                  p.write_text(new, encoding="utf-8")
+                  n += 1
+          print(f"Stamped {n} HTML file(s) with version {sha}")
+          PY
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
