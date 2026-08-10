@@ -126,7 +126,7 @@ window.SITE = {
       paper: "https://doi.org/10.1109/IJCNN55064.2022.9892300",
       arxiv: "",
       openreview: "",
-      code: "",
+      code: "https://github.com/Filco306/GNN-random-indexing",
       poster: "",
       bibtex: `@inproceedings{cornell2022symbolic,
   title     = {Symbolic Hyperdimensional Vectors with Sparse Graph Convolutional Neural Networks},
