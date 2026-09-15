@@ -182,17 +182,17 @@ window.SITE = {
     {
       date: "Jun 2026",
       year: 2026,
-      html: `Our paper was accepted at the <strong>Continual RL Workshop</strong>, Reinforcement Learning Conference (RLC) 2026, Montréal, Canada.`,
+      html: `🎉 Our paper was accepted at the <strong>Continual RL Workshop</strong>, Reinforcement Learning Conference (RLC) 2026, Montréal, Canada.`,
     },
     {
       date: "Jun 2026",
       year: 2026,
-      html: `Awarded a travel grant by <strong>IJCAI 2026</strong>.`,
+      html: `🏆 Awarded a travel grant by <strong>IJCAI 2026</strong>.`,
     },
     {
       date: "May 2026",
       year: 2026,
-      html: `Short paper (Doctoral Consortium) accepted at <strong>IJCAI 2026</strong>.`,
+      html: `🎉 Short paper (Doctoral Consortium) accepted at <strong>IJCAI 2026</strong>.`,
     },
     {
       date: "Dec 2025",
@@ -207,12 +207,12 @@ window.SITE = {
     {
       date: "Jun 2025",
       year: 2025,
-      html: `My PhD Consortium submission was accepted at <strong>KDD 2025</strong>.`,
+      html: `🎉 My PhD Consortium submission was accepted at <strong>KDD 2025</strong>.`,
     },
     {
       date: "Jun 2025",
       year: 2025,
-      html: `Our paper was accepted in <strong>IEEE Transactions on Signal and Information Processing over Networks (TSIPN)</strong>.`,
+      html: `🎉 Our paper was accepted in <strong>IEEE Transactions on Signal and Information Processing over Networks (TSIPN)</strong>.`,
     },
     {
       date: "Mar 2025",
@@ -237,7 +237,7 @@ window.SITE = {
     {
       date: "Jul 2023",
       year: 2023,
-      html: `Selected for the prestigious <strong>TCS Research Fellowship</strong> for the next four years.`,
+      html: `🏆 Selected for the prestigious <strong>TCS Research Fellowship</strong> for the next four years.`,
     },
     {
       date: "Jul 2022",
