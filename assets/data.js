@@ -38,6 +38,25 @@ window.SITE = {
   publications: [
     {
       year: 2026,
+      badge: "LoG",
+      title: "EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites",
+      authors: "Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
+      venue: "Learning on Graphs Conference (LoG)",
+      paper: "",            // ← add links once public
+      arxiv: "",
+      openreview: "",
+      code: "",
+      poster: "",
+      bibtex: `@inproceedings{animesh2026equisite,
+  title     = {EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites},
+  author    = {Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
+  booktitle = {Learning on Graphs Conference (LoG)},
+  year      = {2026}
+}`,
+    },
+
+    {
+      year: 2026,
       badge: "IJCAI",
       title: "Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design",
       authors: "Animesh Animesh",
@@ -266,6 +285,8 @@ window.SITE = {
         "ICDM 2026",
         "IJCNN 2027, 2025, 2024",
         "ACM Transactions on Knowledge Discovery from Data (TKDD), 2025",
+        "IEEE Transactions on Affective Computing (TAFFC), 2026",
+        "AI for Drug Discovery (AI4DD) Workshop @ NeurIPS 2026",
       ],
     },
   ],
