@@ -40,7 +40,7 @@ window.SITE = {
       year: 2026,
       badge: "LoG",
       title: "EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites",
-      authors: "Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
+      authors: "Animesh Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
       venue: "Learning on Graphs Conference (LoG)",
       paper: "",            // ← add links once public
       arxiv: "",
