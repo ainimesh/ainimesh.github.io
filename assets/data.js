@@ -165,6 +165,21 @@ window.SITE = {
      --------------------------------------------------------------------------- */
   news: [
     {
+      date: "Sep 2026",
+      year: 2026,
+      html: `🎉 Our paper was accepted at the <strong>Learning on Graphs Conference (LoG) 2026</strong>, Northeastern University, Boston.`,
+    },
+    {
+      date: "Aug 2026",
+      year: 2026,
+      html: `🏆 Presented my research (oral &amp; poster) at the <strong>Department of AI, IIT Kharagpur</strong> Research Scholar Day, and won the <strong>Best Poster Award</strong>.`,
+    },
+    {
+      date: "Aug 2026",
+      year: 2026,
+      html: `🎤 Presented our paper at <strong>IJCAI 2026</strong> and received valuable feedback from my mentor, <a href="https://www.cs.odu.edu/~yaohang/" target="_blank" rel="noopener">Yaohang Li</a>.`,
+    },
+    {
       date: "Jun 2026",
       year: 2026,
       html: `Our paper was accepted at the <strong>Continual RL Workshop</strong>, Reinforcement Learning Conference (RLC) 2026, Montréal, Canada.`,
