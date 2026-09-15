@@ -49,7 +49,7 @@ window.SITE = {
       poster: "",
       bibtex: `@inproceedings{animesh2026equisite,
   title     = {EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites},
-  author    = {Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
+  author    = {Animesh Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
   booktitle = {Learning on Graphs Conference (LoG)},
   year      = {2026}
 }`,
