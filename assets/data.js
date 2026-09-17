@@ -60,18 +60,25 @@ window.SITE = {
       badge: "IJCAI",
       title: "Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design",
       authors: "Animesh Animesh",
-      venue: "IJCAI — Doctoral Consortium (Short Paper)",
-      paper: "",            // ← add the paper link when available
+      venue: "International Joint Conferences on Artificial Intelligence (IJCAI)",
+      paper: "https://doi.org/10.24963/ijcai.2026/938",            // ← add the paper link when available
       arxiv: "",
       openreview: "",
       code: "",
       poster: "",
-      bibtex: `@inproceedings{animesh2026ijcaidc,
-  title     = {Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design},
-  author    = {Animesh Animesh},
-  booktitle = {International Joint Conference on Artificial Intelligence (IJCAI), Doctoral Consortium},
-  year      = {2026}
-}`,
+      bibtex: `@inproceedings{ijcai2026p938,
+                title     = {Equivariant Graph Neural Networks for Protein Interaction Modeling and Structure-Aware Molecular Design},
+                author    = {Animesh, Animesh},
+                booktitle = {Proceedings of the Thirty-Fifth International Joint Conference on
+                            Artificial Intelligence, {IJCAI-26}},
+                publisher = {International Joint Conferences on Artificial Intelligence Organization},
+                editor    = {James Kwok},
+                pages     = {8319--8320},
+                year      = {2026},
+                month     = {8},
+                note      = {Doctoral Consortium},
+                doi       = {10.24963/ijcai.2026/938},
+              }`,
     },
 
     {
