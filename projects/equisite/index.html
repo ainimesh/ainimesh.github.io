@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EquiSite — multi-site ligand binding site prediction without matching</title>
+<meta name="description" content="EquiSite predicts all ligand binding sites of a protein as a set, with no clustering, learned queries or Hungarian matching. Interactive project page for the LoG 2026 paper.">
+<meta property="og:title" content="EquiSite: end-to-end prediction of multiple ligand binding sites">
+<meta property="og:description" content="Every binding site names one of its own residues as an anchor; every residue scores itself; each selected residue paints its own mask. Explore the decode on real model outputs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ainimesh.github.io/projects/equisite/">
+<meta property="og:image" content="https://ainimesh.github.io/projects/equisite/assets/img/architecture.png">
+<meta name="author" content="Animesh Sachan">
+<link rel="canonical" href="https://ainimesh.github.io/projects/equisite/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230f766e'/%3E%3Ccircle cx='11' cy='12' r='4' fill='%23fff'/%3E%3Ccircle cx='21' cy='11' r='2.6' fill='%23fff' opacity='.7'/%3E%3Ccircle cx='20' cy='21' r='4' fill='%23f2a655'/%3E%3Ccircle cx='10' cy='22' r='2.6' fill='%23fff' opacity='.7'/%3E%3C/svg%3E">
+<script>
+  try { var t = localStorage.getItem('equisite-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- =====================================================================
+     EDIT: the Paper and Code links below are still "#" (add them once public).
+     ===================================================================== -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="topline">
+      <p class="eyebrow"><a href="../../projects.html">← Projects</a> &nbsp;·&nbsp; Accepted at <b>LoG 2026</b> · Learning on Graphs Conference</p>
+      <button class="theme-btn" id="theme-btn" type="button">Dark</button>
+    </div>
+
+    <div class="hero-text">
+      <h1 class="wordmark">Equi<span>Site</span></h1>
+      <p class="subtitle">Equivariant graph neural networks for end-to-end prediction of multiple ligand binding sites</p>
+      <p class="authors"><a href="../../index.html">Animesh Animesh</a>, <a href="https://plaban.github.io/" target="_blank" rel="noopener">Plaban Kumar Bhowmick</a>, <a href="https://cse.iitkgp.ac.in/~pralay/" target="_blank" rel="noopener">Pralay Mitra</a></p>
+      <p class="affil">Indian Institute of Technology Kharagpur</p>
+      <div class="actions">
+        <!-- EDIT: paper and code links -->
+        <a class="btn primary" href="#" id="link-paper">Paper <small>PDF</small></a>
+        <a class="btn" href="#" id="link-code">Code <small>GitHub</small></a>
+        <a class="btn" href="#cite">BibTeX</a>
+        <a class="btn" href="#explorer">Try the live decode ↓</a>
+      </div>
+    </div>
+
+    <div class="hero-stage">
+      <div class="hero-canvas-wrap">
+        <canvas id="hero-canvas" tabindex="0" role="img" aria-label="A protein drawn as one dot per residue, cycling through the four decoding steps of EquiSite: nominate, select, delineate, suppress."></canvas>
+      </div>
+      <div class="hero-steps" role="group" aria-label="Decoding step shown">
+        <button class="hero-step" type="button">Nominate<small>every residue scores itself</small></button>
+        <button class="hero-step" type="button">Select<small id="hero-n">local maxima</small></button>
+        <button class="hero-step" type="button">Delineate<small>one mask per center</small></button>
+        <button class="hero-step" type="button">Suppress<small id="hero-k">drop duplicates</small></button>
+      </div>
+      <p class="hero-note">Real model outputs for UniProt Q939U1 (260 residues, 2 sites), decoded in your browser. Drag to rotate.</p>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="rail" aria-label="Sections">
+    <div class="rail-inner">
+      <p class="eyebrow">On this page</p>
+      <ol>
+        <li><a href="#task">What is being predicted?</a></li>
+        <li><a href="#idea">Who is responsible for which site?</a></li>
+        <li><a href="#head">Four steps to a set of sites</a></li>
+        <li><a href="#training">Training without matching</a></li>
+        <li><a href="#equivariance">What equivariance buys</a></li>
+        <li><a href="#results">How well does it work?</a></li>
+        <li><a href="#failures">Where does it still fail?</a></li>
+        <li><a href="#cite">Cite</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <main class="content">
+
+    <section class="tldr" aria-label="Summary">
+      <div class="tldr-text">
+        <p class="eyebrow">In one paragraph</p>
+        <p>A protein can bind ligands at several sites, so predicting them means predicting a <em>set</em> of residue masks. EquiSite does this with no clustering, no learned queries and no Hungarian matching. Every labelled site names one of its own residues as its <strong>anchor</strong>; every residue scores itself as a candidate anchor; each selected residue paints its own mask.</p>
+        <p>A controlled swap attributes most of the accuracy gain to this head. The equivariant encoder is what keeps the model small and its predictions consistent under rigid motion.</p>
+      </div>
+      <div class="tldr-facts">
+        <div class="fact"><b>0.467 <i>vs 0.384</i></b><span>residue-IoU AP@0.5 on UniSite-DS, against UniSite-3D</span></div>
+        <div class="fact"><b>27× <i>fewer</i></b><span>trainable parameters: 1.2M against 32.8M</span></div>
+        <div class="fact"><b>89% <i>head</i></b><span>share of the AP@0.5 gain attributed to the head in an encoder × head swap</span></div>
+      </div>
+    </section>
+
+    <nav class="inline-toc" aria-label="Sections">
+      <p class="eyebrow">On this page</p>
+      <ol>
+        <li><a href="#task">What is being predicted?</a></li>
+        <li><a href="#idea">Who is responsible for which site?</a></li>
+        <li><a href="#head">Four steps to a set of sites</a></li>
+        <li><a href="#training">Training without matching</a></li>
+        <li><a href="#equivariance">What equivariance buys</a></li>
+        <li><a href="#results">How well does it work?</a></li>
+        <li><a href="#failures">Where does it still fail?</a></li>
+        <li><a href="#cite">Cite</a></li>
+      </ol>
+    </nav>
+
+    <!-- ============================================================ 1 -->
+    <section class="part" id="task">
+      <p class="eyebrow">Part 1 · The task</p>
+      <h2>What is being predicted?</h2>
+      <p class="lede">A ligand binding site is the set of residues lining a pocket where a small molecule docks. Finding these sites is an early step in structure-based drug design.</p>
+      <p>Many proteins have more than one. In UniSite-DS, the benchmark used throughout this page, 31.9% of the 11,510 proteins have two or more labelled sites (1.58 on average, up to 38). So the output is not one label per residue. It is a set: an unknown number of sites, each a subset of the protein's residues with a confidence score.</p>
+
+      <figure class="fig">
+        <div class="img-pad"><img src="assets/img/task.webp" width="2000" height="762" alt="Three renderings of the same protein: the folded chain; the chain with two ligands bound; and the two binding sites, each highlighted as the set of residues lining its pocket." loading="lazy"></div>
+        <figcaption><b>From structure to sites.</b> The input is the folded chain. The target is the set of residues around each bound ligand: here two sites, which touch.</figcaption>
+      </figure>
+
+      <p>Formally, the model maps a protein graph \(\mathcal G\) with \(N\) residues to</p>
+      <div class="eq">\[ f_\theta:\ \mathcal G \;\longmapsto\; \big\{(s_k,\ \hat{\mathbf z}_k,\ \hat{\mathbf m}_k)\big\}_{k=1}^{\widehat K}, \qquad s_k\in[0,1],\quad \hat{\mathbf z}_k\in\mathbb R^{3},\quad \hat{\mathbf m}_k\in\{0,1\}^{N} \]</div>
+      <p>where each element is one predicted site: a score, a 3D center and a residue mask. The number of sites \(\widehat K\) is itself an output.</p>
+      <p>Two things make this harder than classifying residues one by one.</p>
+      <ul>
+        <li><strong>Sites touch and overlap.</strong> In UniSite-DS, 6.9% of binding residues belong to more than one site. A pipeline that first labels residues as binding or not, and then clusters them, has to pull apart pockets that share residues.</li>
+        <li><strong>A set has no order.</strong> Before the loss can compare a prediction with a labelled site, something has to decide which prediction is responsible for which site.</li>
+      </ul>
+      <p>We score predictions as UniSite does. Predictions from all test proteins are ranked by confidence; a prediction counts if its residue-IoU with a labelled site that has not been claimed yet reaches a threshold (0.5 or 0.3); and the ranked list is summarised by average precision (AP).</p>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="part" id="idea">
+      <p class="eyebrow">Part 2 · The idea</p>
+      <h2>Who is responsible for which site?</h2>
+      <p>Every set-prediction model needs a rule that pairs predictions with labelled sites during training. UniSite, the current state of the art, follows DETR: a fixed set of learned queries each propose a site, and Hungarian matching pairs queries with labelled sites by solving an assignment problem on the current predictions, at every training step. The rule is general. It assumes nothing about what the objects are.</p>
+      <p>EquiSite explores a more task-specific alternative. A binding site is not an arbitrary region of space; it is a set of residues. So each site can designate one of its own residues as its representative: the member residue nearest the site's centroid. We call it the site's <strong>anchor</strong>. That residue is responsible for the site, and the pairing is read off the labels once, before training starts.</p>
+
+      <figure class="fig" id="assign">
+        <div class="fig-head"><span class="fig-title">Two ways to decide who is responsible</span><span class="fig-tag">Interactive schematic</span></div>
+        <div class="duo">
+          <div>
+            <h4>Learned queries + Hungarian matching</h4>
+            <p class="sub">The pairing is solved again from the current predictions at each step.</p>
+            <svg id="assign-match" viewBox="0 0 320 240" role="img" aria-label="Six query slots on the left, three labelled sites on the right, with lines joining each site to the query currently matched to it."></svg>
+          </div>
+          <div>
+            <h4>Residue anchors (EquiSite)</h4>
+            <p class="sub">The pairing is a property of the labels. Nothing is solved.</p>
+            <svg id="assign-anchor" viewBox="0 0 320 240" role="img" aria-label="A chain of residues with three labelled sites, each joined to the one residue that is its anchor."></svg>
+          </div>
+        </div>
+        <div class="fig-foot">
+          <button class="ghost" id="assign-next" type="button">Next training step</button>
+          <label class="check"><input type="checkbox" id="assign-auto"> keep stepping</label>
+          <span class="readout">step <b id="assign-step">0</b> · <span id="assign-msg"></span></span>
+        </div>
+        <figcaption><b>A schematic, not a simulation of either model.</b> On the left, costs between queries and sites drift from step to step and the optimal one-to-one assignment is recomputed each time, so the query responsible for a site can change. On the right, each site is tied to its anchor residue for the whole of training.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="eyebrow">Key idea</p>
+        <p>Hungarian matching is unnecessary once a deterministic, residue-based canonicalization of the sites is imposed. Detection then becomes a question that every residue answers about itself: <em>am I the anchor of a site?</em></p>
+      </div>
+
+      <h3>How is the anchor chosen?</h3>
+      <p>The rule is two lines. Compute the site's centroid, then take the member residue closest to it. If two overlapping sites would choose the same residue, the larger site chooses first and the other takes its next-nearest member, so anchors stay distinct.</p>
+
+      <figure class="fig" id="anchor">
+        <div class="fig-head"><span class="fig-title">The anchor is a function of the label</span><span class="fig-tag">Interactive · drag a residue</span></div>
+        <div class="toy-wrap"><canvas id="anchor-canvas" role="img" aria-label="A toy two-dimensional protein chain with two overlapping binding sites. Each site's centroid is marked with a cross and its anchor residue with a ring. Residues can be dragged."></canvas></div>
+        <div class="fig-foot">
+          <button class="ghost" id="anchor-reset" type="button">Reset layout</button>
+          <label class="check"><input type="checkbox" id="anchor-votes" checked> show vote targets</label>
+          <span class="readout" id="anchor-read"></span>
+        </div>
+        <figcaption><b>A toy chain in two dimensions.</b> Two sites (teal and amber) share one residue. Drag residues around: each centroid (✕) follows its members, and the anchor (ringed) is the member nearest to it. The thin arrows are the <em>vote targets</em> used later in training: each site residue points at its site's centroid.</figcaption>
+      </figure>
+
+      <p>On UniSite-DS the anchor sits a median 4.0 Å from its site's centroid (90th percentile 5.9 Å), roughly a third of the way from the centroid to the edge of a typical site. The tie-break rarely matters: it changes the chosen residue in fewer than 1% of cases.</p>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="part" id="head">
+      <p class="eyebrow">Part 3 · The center nomination head</p>
+      <h2>From residues to a set of sites, in four steps</h2>
+      <p>An SE(3)-equivariant encoder reads the protein as a graph: one node per residue at its Cα position, edges within 10 Å, and frozen ESM-2 embeddings as node features. It returns two things per residue, invariant features \(h_i\) and equivariant, steerable features \(X_i\). The center nomination head turns these into sites.</p>
+
+      <figure class="fig">
+        <div class="img-pad scroll"><img src="assets/img/architecture.png" width="2000" height="543" alt="Architecture diagram: protein graph, equivariant encoder producing invariant features h and equivariant features X, then the center nomination head with four stages (Nominate, Select, Delineate, Suppress), and the output set of sites." loading="lazy"></div>
+        <figcaption><b>The pipeline.</b> Every panel is drawn from real outputs on one protein (Q939U1): all residues score themselves, 9 confident local maxima are selected, each paints a mask, and duplicate masks are removed, leaving 7 predictions of which the top two are the labelled sites.</figcaption>
+      </figure>
+
+      <h3>1 · Nominate</h3>
+      <p>Each residue predicts three quantities in parallel: an <em>objectness</em> \(p_i\) (am I in any site?), a <em>centerness</em> \(q_i\) (am I the anchor of one?) and a <em>vote</em> \(\mathbf v_i\) (which way is my site's centroid?).</p>
+      <div class="eq">\[ p_i=\sigma\big(\varphi_p(h_i)\big),\qquad q_i=\sigma\big(\varphi_q(h_i)\big),\qquad \mathbf v_i = X_i^{(1)}\mathbf w\ \in\mathbb R^{3} \]</div>
+      <p>\(\varphi_p,\varphi_q\) are small MLPs and \(\mathbf w\) is a bias-free mix of the \(\ell{=}1\) channels of \(X_i\), so the vote rotates with the protein. Only \(q\) drives the decoding. \(p\) and \(\mathbf v\) are auxiliary signals that shape the shared encoder during training.</p>
+
+      <h3>2 · Select</h3>
+      <p>A residue next to an anchor looks almost as central as the anchor, so \(q\) rises smoothly across a pocket instead of spiking at one residue. Thresholding alone would emit many near-duplicates, so we keep only the confident local maxima:</p>
+      <div class="eq">\[ \mathcal C=\Big\{\, i \;:\; q_i>\tau_q \ \ \wedge\ \ q_i \ge \max_{j\in\mathcal B_\rho(i)} q_j \Big\},\qquad \mathcal B_\rho(i)=\big\{\, j\ne i : \lVert \mathbf p_i-\mathbf p_j\rVert\le\rho \,\big\} \]</div>
+      <p>with \(\tau_q=0.3\) and \(\rho=8\) Å. If no residue passes, the single highest-scoring one is kept. This is one deterministic pass, with no iterations, bandwidth or initialisation.</p>
+
+      <h3>3 · Delineate</h3>
+      <p>Each selected center \(c\) now segments its own residues. For every residue \(j\),</p>
+      <div class="eq">\[ u_{cj} \;=\; \underbrace{\tfrac{1}{\sqrt{h_d}}\,\varphi_Q(h_c)^{\!\top}\varphi_K(h_j)}_{\text{alike in content?}} \;+\; \underbrace{\lambda \sum_{\ell=1}^{\ell_{\max}} \big\langle X_c^{(\ell)},\, X_j^{(\ell)}\big\rangle}_{\text{local geometry aligned?}} \;+\; \underbrace{\varphi_d\big(\psi(d_{cj})\big)}_{\text{close in space?}} \]</div>
+      <p>and \(\sigma(u_{cj})\) is the probability that \(j\) belongs to the site centered at \(c\). Thresholding gives the mask, its score and its 3D center:</p>
+      <div class="eq">\[ \hat{\mathbf m}_c=\{\, j : \sigma(u_{cj})>\tau_m \,\}\cup\{c\},\qquad s_c = q_c\cdot\frac{1}{|\hat{\mathbf m}_c|}\sum_{j\in\hat{\mathbf m}_c}\sigma(u_{cj}),\qquad \hat{\mathbf z}_c=\frac{1}{|\hat{\mathbf m}_c|}\sum_{j\in\hat{\mathbf m}_c}\mathbf p_j \]</div>
+      <p>with \(\tau_m=0.4\).</p>
+
+      <h3>4 · Suppress</h3>
+      <p>Select separates centers by distance, but two centers more than \(\rho\) apart can still paint nearly the same residues. Greedy non-maximum suppression over the masks removes such duplicates: keep the best-scoring mask, drop every other mask whose IoU with it is at least \(\tau_{\text{nms}}=0.5\), and repeat. Whatever survives is the prediction, so the number of sites is decided by the model.</p>
+
+      <figure class="fig" id="explorer">
+        <div class="fig-head"><span class="fig-title">Run the decode yourself, on real model outputs</span><span class="fig-tag">Interactive</span></div>
+        <div class="xp-top">
+          <div class="chips" id="xp-proteins" role="group" aria-label="Example protein"></div>
+          <a class="readout" id="xp-uniprot" href="#" target="_blank" rel="noopener"></a>
+        </div>
+        <p class="xp-note"><b>What to look for.</b> <span id="xp-note"></span></p>
+        <div class="xp-stages" role="group" aria-label="Stage shown">
+          <button class="xp-stage" type="button" data-stage="gt"><b>Labels</b><small>sites and their anchors</small></button>
+          <button class="xp-stage" type="button" data-stage="nominate"><b>1 · Nominate</b><small>every residue scores itself</small></button>
+          <button class="xp-stage" type="button" data-stage="select"><b>2 · Select</b><small>confident local maxima</small></button>
+          <button class="xp-stage" type="button" data-stage="delineate"><b>3 · Delineate</b><small>one mask per center</small></button>
+          <button class="xp-stage" type="button" data-stage="sites"><b>4 · Suppress</b><small>the predicted sites</small></button>
+        </div>
+        <div class="xp-main">
+          <div class="xp-view">
+            <canvas id="xp-canvas" tabindex="0" role="img" aria-label="Three-dimensional view of the selected protein, one dot per residue, coloured according to the selected decoding stage. Arrow keys rotate the view."></canvas>
+            <div class="xp-legend" id="xp-legend"></div>
+            <div class="xp-hint">drag to rotate · hover a residue</div>
+            <div class="tip" id="xp-tip"></div>
+          </div>
+          <div class="xp-side">
+            <div class="xp-explain" id="xp-explain"></div>
+            <div class="xp-sub" id="xp-sub"></div>
+            <div class="xp-sliders">
+              <div class="sl"><label for="sl-tq"><i>τ<sub>q</sub></i> · centerness threshold</label><output id="out-tq" for="sl-tq"></output><input type="range" id="sl-tq" min="0.2" max="0.9" step="0.05" value="0.3"></div>
+              <div class="sl"><label for="sl-rho"><i>ρ</i> · local-maximum radius</label><output id="out-rho" for="sl-rho"></output><input type="range" id="sl-rho" min="0" max="16" step="1" value="8"></div>
+              <div class="sl"><label for="sl-tm"><i>τ<sub>m</sub></i> · mask threshold</label><output id="out-tm" for="sl-tm"></output><input type="range" id="sl-tm" min="0.1" max="0.9" step="0.05" value="0.4"></div>
+              <div class="sl"><label for="sl-tnms"><i>τ<sub>nms</sub></i> · duplicate IoU</label><output id="out-tnms" for="sl-tnms"></output><input type="range" id="sl-tnms" min="0.1" max="1" step="0.05" value="0.5"></div>
+            </div>
+            <div class="xp-reset"><button class="ghost" id="xp-reset" type="button">Reset to the paper's values</button><span class="badge" id="xp-badge">paper values</span></div>
+          </div>
+        </div>
+        <div class="funnel" id="xp-funnel"></div>
+        <div class="sites" id="xp-sites"></div>
+        <figcaption><b>Nothing here is precomputed for the sliders.</b> The page ships the network's raw outputs for five test proteins (centerness, objectness, votes, and the mask probabilities of every residue with \(q&gt;0.2\)) and re-runs Select, Delineate and Suppress in your browser. At the paper's values it reproduces the model's actual predictions exactly.</figcaption>
+      </figure>
+
+      <p>Some things to try:</p>
+      <ul>
+        <li>On <strong>Q939U1</strong>, step through the tabs. 26 residues clear \(\tau_q\), 9 of them are local maxima, 7 masks survive, and the two labelled sites are the two top-ranked predictions. The five extras score less than half as much, which is what a ranking metric rewards.</li>
+        <li>Slide \(\rho\) down to <em>off</em>. Select now hands every confident residue to the mask head, and Suppress has to clean up the near-duplicates on its own.</li>
+        <li>On <strong>Q5NGQ3</strong>, two sites share residues and lie 9.4 Å apart. Five centers are selected; Suppress merges them into exactly the two labelled sites.</li>
+        <li>On <strong>Q9LLQ2</strong>, five small sites crowd together and the paper's values find three. Set \(\rho=4\) Å and \(\tau_{\text{nms}}=0.70\): all five are found, among four times as many predictions. <a href="#failures">The last part</a> measures that trade-off on the whole test set.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="part" id="training">
+      <p class="eyebrow">Part 4 · Supervision</p>
+      <h2>Training without matching</h2>
+      <p>Because every labelled site has named its anchor \(c_k\), every training target is fixed before the first gradient step. From the site masks \(\mathbf m_k\) and the anchors we build four targets, once, offline:</p>
+      <ul>
+        <li><strong>Centerness</strong> \(q^\star_i\): 1 on the \(K\) anchors and 0 elsewhere. One positive per site among hundreds of residues, so its focal loss carries the largest weight.</li>
+        <li><strong>Objectness</strong> \(y_i\): 1 if residue \(i\) lies in any site.</li>
+        <li><strong>Vote</strong> \(\mathbf v^\star_i\): the offset from a site residue to its site's centroid.</li>
+        <li><strong>Masks</strong>: for each labelled site, the mask head is conditioned on that site's true anchor, and its output is compared with that site's mask alone.</li>
+      </ul>
+      <div class="eq">\[ \begin{aligned} \mathcal L \;=\;& \underbrace{w_q\,\mathcal L_{\text{focal}}(q,q^\star)}_{\text{centerness}} \;+\; \underbrace{w_{\text{obj}}\,\mathcal L_{\text{focal}}(p,y)+w_{\text{dice}}\,\mathcal L_{\text{dice}}(p,y)}_{\text{objectness}} \;+\; \underbrace{w_v\,\mathcal L_{\text{sL}_1}(\mathbf v,\mathbf v^\star)_{\text{fg}}}_{\text{vote}} \\[0.4em] &+\; \underbrace{\frac1K\sum_{k=1}^{K}\Big[2\,\mathcal L_{\text{dice}}(\mathbf u_{c_k},\mathbf m_k)+\mathcal L_{\text{focal}}(\mathbf u_{c_k},\mathbf m_k)\Big]}_{\text{one mask per labelled site, conditioned on its anchor } c_k} \end{aligned} \]</div>
+      <p>The first three terms are dense, per-residue losses. The last is per-site, and it needs no matching because the anchor says which mask output belongs to which site. At inference the mask head is conditioned on the predicted centers instead. The <em>Labels</em> tab of the explorer above shows these targets on real proteins.</p>
+
+      <h3>Are the auxiliary signals needed?</h3>
+      <p>Objectness and votes never enter the decode, so it is fair to ask what they are for. We retrained without each.</p>
+
+      <figure class="fig" id="aux">
+        <div class="fig-head"><span class="fig-title">Switch an auxiliary loss off</span><span class="fig-tag">Interactive</span></div>
+        <div class="aux">
+          <div class="aux-pick">
+            <label class="switch"><input type="checkbox" id="aux-vote" checked><span><b>Vote loss</b><small>each site residue regresses the offset to its site's centroid</small></span></label>
+            <label class="switch"><input type="checkbox" id="aux-obj" checked><span><b>Objectness loss</b><small>each residue predicts whether it lies in any site</small></span></label>
+            <div class="switch locked"><input type="checkbox" checked disabled aria-label="Always on"><span><b>Centerness and per-site masks</b><small>always on: these define the decode</small></span></div>
+          </div>
+          <div class="aux-out">
+            <div class="swap-name" id="aux-label"></div>
+            <div class="delta"><span>AP@0.5 change</span><div class="delta-track"><div class="delta-fill" id="aux-bar50"></div></div><span class="val" id="aux-val50"></span></div>
+            <div class="delta"><span>AP@0.3 change</span><div class="delta-track"><div class="delta-fill" id="aux-bar30"></div></div><span class="val" id="aux-val30"></span></div>
+            <p class="readout">Predictions per protein: <b id="aux-preds"></b></p>
+            <p class="sites-note" id="aux-note"></p>
+          </div>
+        </div>
+        <figcaption><b>Change in AP relative to the full model</b> on the UniSite-DS test set. One training run per setting, same seed, same decode. The vote result shows the value of vote supervision as a training signal; it does not by itself show that the vote has to be equivariant.</figcaption>
+      </figure>
+
+      <p>The per-site mask term matters far more than either auxiliary. Without the mask head, sites have to be formed by assigning each binding residue to the nearest center through its vote, and AP@0.5 drops from 0.464 ± 0.007 to 0.201 ± 0.012 over three seeds.</p>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="part" id="equivariance">
+      <p class="eyebrow">Part 5 · Symmetry</p>
+      <h2>What does equivariance buy?</h2>
+      <p>Rotate or translate a protein and its binding sites move with it. Which residues form a site does not change. EquiSite has this built in. For a fixed neighbourhood graph, every scalar it produces (objectness, centerness, mask logits, and therefore the masks and their scores) is invariant to rigid motions; votes rotate with the structure, and predicted site centers move with it. This is Proposition 1 of the paper:</p>
+      <div class="eq">\[ f_\theta(g\cdot\mathcal G)=\big\{(s_k,\ \mathbf R\,\hat{\mathbf z}_k+\mathbf t,\ \hat{\mathbf m}_k)\big\}_{k=1}^{\widehat K}\qquad\text{for every rigid motion } g=(\mathbf R,\mathbf t)\in \mathrm{SE}(3) \]</div>
+
+      <figure class="fig" id="pose">
+        <div class="fig-head"><span class="fig-title">Move the input: scores stay, votes turn</span><span class="fig-tag">Interactive</span></div>
+        <div class="pose">
+          <div class="pose-view"><canvas id="pose-a" role="img" aria-label="The protein in its original pose, residues coloured by centerness, with vote arrows."></canvas><div class="pose-label">Pose A<small>coordinates as deposited</small></div></div>
+          <div class="pose-view live"><canvas id="pose-b" tabindex="0" role="img" aria-label="The same protein after a rotation. Drag or use the arrow keys to rotate it."></canvas><div class="pose-label">Pose B = R · A<small>drag to rotate the input</small></div></div>
+        </div>
+        <div class="strip-wrap">
+          <div class="strip-row"><span>\(q_i\) along the chain · pose A</span><canvas id="strip-a" aria-hidden="true"></canvas></div>
+          <div class="strip-row"><span>\(q_i\) along the chain · pose B</span><canvas id="strip-b" aria-hidden="true"></canvas></div>
+          <div class="readout">Top-ranked center <b id="pose-res"></b> · q: <b id="pose-qa"></b> in A, <b id="pose-qb"></b> in B · vote: <b id="pose-va"></b> in A, <b id="pose-vb"></b> in B</div>
+        </div>
+        <div class="fig-foot">
+          <button class="ghost" id="pose-random" type="button">Random rotation</button>
+          <button class="ghost" id="pose-reset" type="button">Same pose as A</button>
+        </div>
+        <div class="meas">
+          <div><b><span data-rot="same_sites"></span> of <span data-rot="n"></span></b><span>test proteins return exactly the same ranked list of sites after a random rotation and translation</span></div>
+          <div><b data-rot="q_max"></b><span>largest change in any centerness score when the graph is unchanged</span></div>
+          <div><b><span data-rot="vote_max"></span> Å</b><span>largest gap between a vote and the rotated original vote</span></div>
+        </div>
+        <figcaption><b>What the two panels show.</b> The axes in the corner are fixed; it is the protein that turns. Colours (centerness), rings (the predicted centers) and the two strips are the same in both poses, while every vote arrow turns with the structure: its coordinates change, its meaning does not. The network is not re-run in your browser. The three numbers underneath are what we measured when we did re-run it, on every test protein.</figcaption>
+      </figure>
+
+      <p>We checked this on all <span data-rot="n"></span> test proteins, applying a random rotation and translation to each and re-running the whole model. <span data-rot="same_sites"></span> return exactly the same ranked list of sites. The two that do not are instructive.</p>
+      <ul>
+        <li><strong>An edge at the cutoff.</strong> In <span data-rot="flips"></span> proteins a pair of residues sits within about 10<sup>−4</sup> Å of the 10 Å graph cutoff, and float32 round-off in the moved coordinates flips that edge. Centerness scores then shift by up to <span data-rot="flip_q_max"></span>, and in one of the two proteins Suppress keeps a different mask. This is the "fixed neighbourhood graph" condition of the proposition at work.</li>
+        <li><strong>A near-tie.</strong> In one protein the sites are identical but two almost equal scores swap rank. The cause is round-off in the float32 pairwise-distance routine; with exact distances the ranking is identical too.</li>
+      </ul>
+
+      <div class="callout scope">
+        <p class="eyebrow">A property, not the source of the gain</p>
+        <p>We do not claim that equivariance is what makes EquiSite more accurate. In the swap experiment below, exchanging only the encoder accounts for 11% of the AP@0.5 gain (16% at AP@0.3). What the equivariant encoder contributes is a lightweight, pose-consistent backbone: about 1.1M parameters, where the encoder stack of UniSite-3D has about 26M.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="part" id="results">
+      <p class="eyebrow">Part 6 · Results</p>
+      <h2>How well does it work?</h2>
+      <p>EquiSite and UniSite-3D are trained on UniSite-DS with its official split at 90% maximum sequence identity (9,217 training and 2,293 test proteins), and take the same inputs: the structure and frozen ESM-2 embeddings.</p>
+
+      <figure class="fig">
+        <div class="fig-head"><span class="fig-title">UniSite-DS test set, residue-IoU average precision</span><div class="seg" id="main-metric" role="group" aria-label="Metric"><button type="button" data-v="50" aria-pressed="true">AP@0.5</button><button type="button" data-v="30" aria-pressed="false">AP@0.3</button></div></div>
+        <div class="fig-body"><div class="bars" id="main-bars"></div></div>
+        <div class="fig-foot"><span id="main-note"></span></div>
+        <figcaption>UniSite-3D is re-evaluated from its released checkpoint; the other baselines are quoted from the UniSite paper. All use the same evaluation protocol.</figcaption>
+      </figure>
+
+      <h3>Where does the gain come from?</h3>
+      <p>EquiSite differs from UniSite-3D in both its encoder and its head, so the comparison above cannot say which change matters. We trained the two hybrids to find out.</p>
+
+      <figure class="fig" id="swap">
+        <div class="fig-head"><span class="fig-title">Swap one component at a time</span><div class="seg" id="swap-metric" role="group" aria-label="Metric"><button type="button" data-v="50" aria-pressed="true">AP@0.5</button><button type="button" data-v="30" aria-pressed="false">AP@0.3</button></div></div>
+        <div class="swap">
+          <div class="swap-pick">
+            <div>
+              <h4>Encoder</h4>
+              <div class="opt">
+                <button type="button" data-enc="gear"><b>UniSite-3D encoder</b><small>GearNet-Edge + transformer encoder · 26.2M</small></button>
+                <button type="button" data-enc="equi"><b>EquiSite encoder</b><small>SE(3)-equivariant, 4 layers · 1.1M</small></button>
+              </div>
+            </div>
+            <div>
+              <h4>Head</h4>
+              <div class="opt">
+                <button type="button" data-head="detr"><b>UniSite-3D head</b><small>32 learned queries, Hungarian matching · 6.6M</small></button>
+                <button type="button" data-head="center"><b>Center nomination head</b><small>residue anchors, no matching · 0.1M</small></button>
+              </div>
+            </div>
+          </div>
+          <div class="swap-out">
+            <div class="swap-name" id="swap-name"></div>
+            <div class="kv"><span>AP@0.5</span><div class="bar-track"><div class="bar-fill" id="swap-bar50" style="background:var(--teal)"></div></div><span class="val" id="swap-val50"></span></div>
+            <div class="kv"><span>AP@0.3</span><div class="bar-track"><div class="bar-fill" id="swap-bar30" style="background:var(--teal)"></div></div><span class="val" id="swap-val30"></span></div>
+            <div class="kv"><span>Params</span><div class="bar-track"><div class="bar-fill" id="swap-barp"></div></div><span class="val" id="swap-valp"></span></div>
+            <div class="grid22" role="group" aria-label="All four combinations">
+              <div class="h"></div><div class="h">UniSite-3D head</div><div class="h">Center nomination head</div>
+              <div class="h">UniSite-3D encoder</div><div class="cell" data-k="gear|detr"></div><div class="cell" data-k="gear|center"></div>
+              <div class="h">EquiSite encoder</div><div class="cell" data-k="equi|detr"></div><div class="cell" data-k="equi|center"></div>
+            </div>
+            <div>
+              <div class="attr" role="img" aria-label="Share of the gain attributed to the head and to the encoder"><div class="a-head" id="attr-head"></div><div class="a-enc" id="attr-enc"></div></div>
+              <div class="attr-legend"><span class="h" id="attr-head-t"></span><span class="e" id="attr-enc-t"></span></div>
+              <p class="sites-note" id="attr-note"></p>
+            </div>
+          </div>
+        </div>
+        <figcaption><b>Four models, same data and evaluation.</b> The attribution bar averages each component's effect over both settings of the other. The head accounts for 89% of the AP@0.5 gain and 84% of the AP@0.3 gain; the encoder supplies the rest, with 24 times fewer encoder parameters.</figcaption>
+      </figure>
+
+      <h3>Does it hold as the number of sites grows?</h3>
+      <figure class="fig">
+        <div class="fig-head"><span class="fig-title">Test proteins grouped by number of labelled sites</span><div class="seg" id="mult-metric" role="group" aria-label="Metric"><button type="button" data-v="50" aria-pressed="true">AP@0.5</button><button type="button" data-v="30" aria-pressed="false">AP@0.3</button></div></div>
+        <div class="fig-body">
+          <div class="legend"><span><i class="dot sq" style="background:var(--slate)"></i>UniSite-3D</span><span><i class="dot sq" style="background:var(--teal)"></i>EquiSite</span><span style="color:var(--teal-ink)">+x% = relative gain</span></div>
+          <div class="grouped" id="mult"></div>
+        </div>
+        <figcaption>EquiSite is ahead in every group, and its relative margin is larger where there are more sites. Absolute accuracy falls steeply for both methods: with four or more sites per protein, neither does well.</figcaption>
+      </figure>
+
+      <h3>Less similar test proteins</h3>
+      <p>UniSite-DS ships stricter splits in which no test protein exceeds 70% or 50% sequence identity with the training set. Each model is retrained on each split.</p>
+      <figure class="fig">
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead>
+              <tr class="cols"><th></th><th colspan="2">AP@0.5</th><th colspan="2" class="sep">AP@0.3</th></tr>
+              <tr><th>Max. train/test identity</th><th>UniSite-3D</th><th>EquiSite</th><th>UniSite-3D</th><th>EquiSite</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>90%</td><td>0.3835</td><td class="best">0.4674</td><td>0.5603</td><td class="best">0.6237</td></tr>
+              <tr><td>70%</td><td>0.3734</td><td class="best">0.4534</td><td>0.5579</td><td class="best">0.6221</td></tr>
+              <tr><td>50%</td><td>0.2801</td><td class="best">0.3834</td><td>0.4677</td><td class="best">0.5575</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption>UniSite-3D values at 70% and 50% are quoted from the UniSite paper.</figcaption>
+      </figure>
+
+      <h3>Predicted structures</h3>
+      <p>In practice binding sites are often sought on predicted structures. For the 2,161 test proteins with an AlphaFold model, we ran the same checkpoint on AlphaFold coordinates in place of the experimental ones. AP@0.5 moves from 0.4764 to 0.4706 and AP@0.3 from 0.6324 to 0.6249, a change under 0.008.</p>
+      <figure class="fig">
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead><tr><th>Mean pLDDT of the model</th><th>Proteins</th><th>Cα RMSD to experiment</th><th>AP@0.5, experimental</th><th>AP@0.5, AlphaFold</th><th>Change</th></tr></thead>
+            <tbody>
+              <tr><td>94.5 or lower</td><td>541</td><td>2.62 Å</td><td>0.4538</td><td>0.4310</td><td>−0.0228</td></tr>
+              <tr><td>94.5 to 96.2</td><td>540</td><td>1.35 Å</td><td>0.4631</td><td>0.4570</td><td>−0.0061</td></tr>
+              <tr><td>96.2 to 97.4</td><td>540</td><td>0.78 Å</td><td>0.4844</td><td>0.4877</td><td>+0.0033</td></tr>
+              <tr><td>97.4 or higher</td><td>540</td><td>0.54 Å</td><td>0.5265</td><td>0.5330</td><td>+0.0064</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption><b>Scope.</b> These are high-confidence AlphaFold models (mean pLDDT 95.4, none below 70). The result is limited to structures of that quality: the loss is concentrated in the least confident quarter.</figcaption>
+      </figure>
+
+      <h3>Other benchmarks</h3>
+      <p>HOLO4K-sc and COACH420 are the standard single-chain benchmarks of the binding-site literature. For this comparison EquiSite is trained on the benchmark split of UniSite-DS and applied to the two sets without further training. DCC and DCA are the classical center-distance success rates.</p>
+      <figure class="fig">
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead>
+              <tr class="cols"><th></th><th colspan="3">HOLO4K-sc</th><th colspan="3" class="sep">COACH420</th></tr>
+              <tr><th>Method</th><th>AP@0.3</th><th>DCC</th><th>DCA</th><th>AP@0.3</th><th>DCC</th><th>DCA</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Fpocket</td><td>0.2711</td><td>0.3076</td><td>0.4382</td><td>0.2106</td><td>0.2708</td><td>0.4107</td></tr>
+              <tr><td>Fpocket-rescore</td><td>0.5899</td><td>0.5183</td><td>0.7654</td><td>0.5602</td><td>0.4405</td><td>0.7113</td></tr>
+              <tr><td>P2Rank</td><td>0.6011</td><td>0.5300</td><td>0.8188</td><td>0.6188</td><td>0.4643</td><td>0.7411</td></tr>
+              <tr><td>DeepPocket</td><td>0.5415</td><td>0.4925</td><td>0.7369</td><td>0.5184</td><td>0.3958</td><td>0.6756</td></tr>
+              <tr><td>GrASP</td><td>0.6668</td><td>0.5131</td><td>0.7416</td><td>0.7150</td><td>0.4851</td><td class="best">0.7620</td></tr>
+              <tr><td>VN-EGNN</td><td>0.2606</td><td>0.5861</td><td>0.6999</td><td>0.2637</td><td>0.5446</td><td>0.7530</td></tr>
+              <tr><td>UniSite-3D</td><td>0.7091</td><td>0.5716</td><td>0.7879</td><td class="best">0.7196</td><td>0.4702</td><td>0.7381</td></tr>
+              <tr class="ours"><td>EquiSite</td><td class="best">0.7786</td><td class="best">0.7176</td><td class="best">0.8624</td><td>0.6928</td><td class="best">0.5556</td><td>0.7544</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption>Best value per column underlined. EquiSite leads on all three HOLO4K-sc metrics and on COACH420 DCC. On COACH420 it is behind UniSite-3D and GrASP on AP@0.3 and behind GrASP on DCA.</figcaption>
+      </figure>
+
+      <h3>Size and speed</h3>
+      <figure class="fig">
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead><tr><th></th><th>UniSite-3D</th><th>EquiSite</th><th>Ratio</th></tr></thead>
+            <tbody>
+              <tr><td>Trainable parameters</td><td>32.8M</td><td>1.2M</td><td>27×</td></tr>
+              <tr><td>Model forward pass, per protein</td><td>49.3 ms</td><td>9.2 ms</td><td>5.4×</td></tr>
+              <tr><td>ESM-2 embedding, per protein (both models)</td><td>29.8 ms</td><td>29.8 ms</td><td>1×</td></tr>
+              <tr><td>End to end, per protein</td><td>79.1 ms</td><td>39.0 ms</td><td>2.0×</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption>Batch size 1 on one NVIDIA H100. Both models consume the same frozen ESM-2 (650M) embeddings, which dominate the end-to-end time, so the honest speed-up for a user starting from a structure is 2×, not 5×. EquiSite trains in under an hour on the same GPU.</figcaption>
+      </figure>
+
+      <h3>What the predictions look like</h3>
+      <figure class="fig">
+        <div class="img-pad"><img src="assets/img/qualitative.webp" width="1798" height="1104" alt="Molecular renderings comparing ground truth, EquiSite and UniSite-3D on a one-site protein (P84078) and a two-site protein (Q7YYQ9), with per-site IoU values under each panel." loading="lazy"></div>
+        <figcaption><b>Two test proteins.</b> Left: labelled sites. Middle and right: the predictions matched to them, drawn over the labels, with their IoU.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="part" id="failures">
+      <p class="eyebrow">Part 7 · Error analysis</p>
+      <h2>Where does it still fail?</h2>
+      <p>At the paper's settings EquiSite recovers 58% of the labelled test sites at IoU ≥ 0.5: 2,119 of 3,645. We traced each of the 1,526 misses to the first stage of the decode that lost it.</p>
+
+      <figure class="fig" id="miss">
+        <div class="fig-head"><span class="fig-title">Which stage lost each missed site?</span><div class="seg" id="miss-mode" role="group" aria-label="Normalisation"><button type="button" data-v="gt" aria-pressed="true">of all labelled sites</button><button type="button" data-v="missed" aria-pressed="false">of missed sites</button></div></div>
+        <div class="fig-body">
+          <div class="legend" style="margin-bottom:0.9rem">
+            <span><i class="dot sq" style="background:var(--teal)"></i>mask quality</span>
+            <span><i class="dot sq" style="background:var(--s3)"></i>never nominated</span>
+            <span><i class="dot sq" style="background:var(--amber)"></i>Select, other</span>
+            <span><i class="dot sq" style="background:var(--s4)"></i>Select, close pair of sites</span>
+            <span><i class="dot sq" style="background:var(--slate)"></i>Suppress</span>
+          </div>
+          <div class="stack-rows" id="miss-rows"></div>
+          <p class="stack-detail" id="miss-detail" style="margin:0.9rem 0 0"></p>
+        </div>
+        <figcaption>UniSite-DS test set, grouped by the number of labelled sites in the protein. A miss is assigned to the first stage that lost the site, in the order Suppress, Select, Nominate, mask quality.</figcaption>
+      </figure>
+
+      <p>Three quarters of the misses (1,146 of 1,526) are a learning problem rather than a decoding problem: the site was never nominated, or its mask was not good enough. The share that is never nominated grows sharply in proteins with four or more sites (271 of 625 misses), where sites are small and crowded. The two suppression steps cost less. Select accounts for 276 misses, of which 55 involve two labelled sites closer together than \(\rho\). Suppress accounts for 104, or 2.9% of all labelled sites.</p>
+
+      <h3>Both suppression steps are a trade</h3>
+      <p>Select and Suppress each remove candidates, and each occasionally removes a correct one. Loosening them on the whole test set shows what they buy.</p>
+      <figure class="fig">
+        <div class="tbl-wrap">
+          <table class="data">
+            <thead><tr><th>Decode setting</th><th>AP@0.5 change</th><th>AP@0.3 change</th><th>Sites found at IoU ≥ 0.5</th><th>Predictions per protein</th></tr></thead>
+            <tbody>
+              <tr class="ours"><td>Paper: ρ = 8 Å, τ<sub>nms</sub> = 0.5</td><td>0</td><td>0</td><td>58.1%</td><td>4.47</td></tr>
+              <tr><td>ρ = 6 Å</td><td>+0.006</td><td>+0.008</td><td>60.3%</td><td>5.92</td></tr>
+              <tr><td>ρ = 4 Å</td><td>+0.010</td><td>+0.011</td><td>62.0%</td><td>7.64</td></tr>
+              <tr><td>Select off</td><td>+0.013</td><td>+0.013</td><td>63.1%</td><td>9.20</td></tr>
+              <tr><td>Suppress off</td><td>−0.017</td><td>−0.049</td><td>61.0%</td><td>5.85</td></tr>
+              <tr><td>Both off</td><td>−0.060</td><td>−0.128</td><td>70.1%</td><td>21.27</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption>Same checkpoint, only the decode changes. Proteins in the test set have 1.59 labelled sites on average.</figcaption>
+      </figure>
+      <p>A smaller \(\rho\) finds more sites and nudges AP up, while doubling the number of predictions per protein and the number of mask-head evaluations. The paper's value of 8 Å takes the compact end of that trade. Suppress is the opposite case: without it AP falls, because near-duplicate masks crowd the ranking.</p>
+
+      <figure class="fig">
+        <div class="fig-head"><span class="fig-title">How strict should duplicate removal be?</span><span class="fig-tag">Test set</span></div>
+        <div class="fig-body"><svg id="nms-chart" viewBox="0 0 520 250" role="img" aria-label="Line chart of AP at IoU 0.5 and AP at IoU 0.3 as the duplicate-removal threshold goes from 0.5 to off. AP at 0.5 stays within 0.005 up to 0.8 and then falls; AP at 0.3 falls steadily." style="display:block;width:100%;max-width:38rem;height:auto;margin:0 auto"></svg></div>
+        <figcaption>\(\tau_{\text{nms}}=0.5\) was chosen on a validation sweep. Between 0.5 and 0.8, AP@0.5 moves by less than 0.005 while AP@0.3 declines steadily. Suppress can still remove a correct mask when prediction errors make two different sites look alike; that is the 104 sites above.</figcaption>
+      </figure>
+
+      <h3>Limitations</h3>
+      <ul>
+        <li><strong>Many-site proteins remain hard.</strong> With four or more sites per protein, AP@0.5 is 0.121. Most misses there are sites that no residue nominated.</li>
+        <li><strong>One residue stands for a site.</strong> Two sites whose anchors lie within \(\rho\) compete in Select. 8.8% of labelled site pairs in the test set have centroids closer than 8 Å.</li>
+        <li><strong>Predicted structures:</strong> robustness has been shown only for high-confidence AlphaFold models.</li>
+        <li><strong>The auxiliary-loss ablation is a single seed</strong> per setting. For scale, the full model's AP@0.5 varies by ±0.007 across three seeds.</li>
+        <li><strong>The language model is not free.</strong> Frozen ESM-2 embeddings are an input and dominate end-to-end inference time.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ cite -->
+    <section class="part" id="cite">
+      <p class="eyebrow">Reference</p>
+      <h2>Cite</h2>
+      <pre class="bib" id="bibtex">@inproceedings{animesh2026equisite,
+  title     = {EquiSite: Equivariant Graph Neural Networks for End-to-End
+               Prediction of Multiple Ligand Binding Sites},
+  author    = {Animesh Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
+  booktitle = {Learning on Graphs Conference (LoG)},
+  year      = {2026}
+}</pre>
+      <button class="ghost" id="copy-bib" type="button">Copy BibTeX</button>
+      <p style="margin-top:1.6rem">EquiSite builds directly on UniSite and its UniSite-DS benchmark, whose data, baselines and evaluation protocol we use throughout, and on DETR, CenterNet, HEGNN and ESM-2. Full references are in the paper.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-foot">
+  <div><a href="../../index.html">Animesh Sachan</a> · <a href="../../projects.html">Projects</a> · EquiSite project page · LoG 2026 · The interactive figures run on outputs of the released checkpoint.</div>
+</footer>
+
+<script src="assets/vendor/katex/katex.min.js"></script>
+<script src="assets/vendor/katex/auto-render.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/widgets.js"></script>
+</body>
+</html>

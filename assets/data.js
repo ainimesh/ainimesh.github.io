@@ -47,6 +47,7 @@ window.SITE = {
       openreview: "",
       code: "",
       poster: "",
+      links: [{ label: "Project page", url: "projects/equisite/" }],
       bibtex: `@inproceedings{animesh2026equisite,
   title     = {EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites},
   author    = {Animesh Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
