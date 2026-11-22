@@ -41,18 +41,19 @@ window.SITE = {
       badge: "LoG",
       title: "EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites",
       authors: "Animesh Animesh, Plaban Kumar Bhowmick, Pralay Mitra",
-      venue: "Learning on Graphs Conference (LoG)",
-      paper: "",            // ← add links once public
+      venue: "The Fifth Learning on Graphs Conference (LoG)",
+      paper: "https://openreview.net/pdf?id=wBMHDA5q2S",
       arxiv: "",
-      openreview: "",
-      code: "",
+      openreview: "https://openreview.net/forum?id=wBMHDA5q2S",
+      code: "",            // ← add the GitHub link once public
       poster: "",
       links: [{ label: "Project page", url: "projects/equisite/" }],
       bibtex: `@inproceedings{animesh2026equisite,
   title     = {EquiSite: Equivariant Graph Neural Networks for End-to-End Prediction of Multiple Ligand Binding Sites},
   author    = {Animesh Animesh and Plaban Kumar Bhowmick and Pralay Mitra},
-  booktitle = {Learning on Graphs Conference (LoG)},
-  year      = {2026}
+  booktitle = {The Fifth Learning on Graphs Conference},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=wBMHDA5q2S}
 }`,
     },
 
