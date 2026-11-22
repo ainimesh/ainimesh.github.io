@@ -339,7 +339,7 @@ code, .mono { font-family: var(--mono); font-size: 0.86em; }
 }
 .tldr-text { padding: 1.4rem 1.6rem 1.5rem; }
 .tldr-text p:not(.eyebrow) { margin: 0.6rem 0 0; font-size: 1.1rem; line-height: 1.55; }
-.tldr-facts { border-left: 1px solid var(--line); display: grid; grid-template-rows: repeat(3, 1fr); }
+.tldr-facts { border-left: 1px solid var(--line); display: grid; grid-auto-rows: 1fr; }
 .fact { padding: 0.85rem 1.3rem; border-bottom: 1px solid var(--line); display: grid; align-content: center; }
 .fact:last-child { border-bottom: 0; }
 .fact b {
@@ -733,7 +733,7 @@ pre.bib {
   .masthead-inner { grid-template-columns: minmax(0, 1fr); }
   .hero-stage { max-width: 34rem; }
   .tldr { grid-template-columns: minmax(0, 1fr); }
-  .tldr-facts { border-left: 0; border-top: 1px solid var(--line); grid-template-rows: none; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tldr-facts { border-left: 0; border-top: 1px solid var(--line); grid-auto-rows: auto; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
   .fact { border-bottom: 0; border-right: 1px solid var(--line); padding: 0.8rem 0.9rem; }
   .fact:last-child { border-right: 0; }
   .fact b { font-size: 1.25rem; }
@@ -763,7 +763,7 @@ pre.bib {
   .meas div { border-right: 0; border-bottom: 1px solid var(--line); }
   .meas div:last-child { border-bottom: 0; }
   .strip-row { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
-  .tldr-facts { grid-template-columns: minmax(0, 1fr); }
+  .tldr-facts { grid-auto-flow: row; }
   .fact { border-right: 0; border-bottom: 1px solid var(--line); }
   .grouped { height: 12rem; gap: 0.3rem; }
   .vbar span { font-size: 0.58rem; }

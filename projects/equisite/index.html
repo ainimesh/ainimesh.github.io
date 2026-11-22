@@ -81,12 +81,16 @@
       <div class="tldr-text">
         <p class="eyebrow">In one paragraph</p>
         <p>A protein can bind ligands at several sites, so predicting them means predicting a <em>set</em> of residue masks. EquiSite does this with no clustering, no learned queries and no Hungarian matching. Every labelled site names one of its own residues as its <strong>anchor</strong>; every residue scores itself as a candidate anchor; each selected residue paints its own mask.</p>
+        <!-- HIDDEN FOR NOW: refers to the hidden swap figure
         <p>A controlled swap attributes most of the accuracy gain to this head. The equivariant encoder is what keeps the model small and its predictions consistent under rigid motion.</p>
+        -->
       </div>
       <div class="tldr-facts">
         <div class="fact"><b>0.467 <i>vs 0.384</i></b><span>residue-IoU AP@0.5 on UniSite-DS, against UniSite-3D</span></div>
         <div class="fact"><b>27× <i>fewer</i></b><span>trainable parameters: 1.2M against 32.8M</span></div>
+        <!-- HIDDEN FOR NOW: refers to the hidden swap figure
         <div class="fact"><b>89% <i>head</i></b><span>share of the AP@0.5 gain attributed to the head in an encoder × head swap</span></div>
+        -->
       </div>
     </section>
 
@@ -333,7 +337,7 @@
 
       <div class="callout scope">
         <p class="eyebrow">A property, not the source of the gain</p>
-        <p>We do not claim that equivariance is what makes EquiSite more accurate. In the swap experiment below, exchanging only the encoder accounts for 11% of the AP@0.5 gain (16% at AP@0.3). What the equivariant encoder contributes is a lightweight, pose-consistent backbone: about 1.1M parameters, where the encoder stack of UniSite-3D has about 26M.</p>
+        <p>We do not claim that equivariance is what makes EquiSite more accurate. <!-- HIDDEN FOR NOW: In the swap experiment below, exchanging only the encoder accounts for 11% of the AP@0.5 gain (16% at AP@0.3). --> What the equivariant encoder contributes is a lightweight, pose-consistent backbone: about 1.1M parameters, where the encoder stack of UniSite-3D has about 26M.</p>
       </div>
     </section>
 
@@ -539,9 +543,11 @@
       <h3>Limitations</h3>
       <ul>
         <li><strong>Many-site proteins remain hard.</strong> With four or more sites per protein, AP@0.5 is 0.121. Most misses there are sites that no residue nominated.</li>
+        <!-- HIDDEN FOR NOW: limitations
         <li><strong>One residue stands for a site.</strong> Two sites whose anchors lie within \(\rho\) compete in Select. 8.8% of labelled site pairs in the test set have centroids closer than 8 Å.</li>
         <li><strong>Predicted structures:</strong> robustness has been shown only for high-confidence AlphaFold models.</li>
         <li><strong>The auxiliary-loss ablation is a single seed</strong> per setting. For scale, the full model's AP@0.5 varies by ±0.007 across three seeds.</li>
+        -->
         <li><strong>The language model is not free.</strong> Frozen ESM-2 embeddings are an input and dominate end-to-end inference time.</li>
       </ul>
     </section>
